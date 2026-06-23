@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>SiMplyKhmenglish — Learn English with Sim</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --primary: #6C3FD4;
+  --primary-light: #EDE9FE;
+  --accent: #F59E0B;
+  --success: #10B981;
+  --text: #1E1433;
+  --muted: #6B7280;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #F5F3FF;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(160deg, #6C3FD4 0%, #9333EA 60%, #C084FC 100%);
+  padding: 60px 24px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+  top: -100px; right: -100px;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 300px; height: 300px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+  bottom: -80px; left: -60px;
+}
+
+.hero-emoji { font-size: 64px; margin-bottom: 16px; display: block; }
+
+.hero h1 {
+  font-size: clamp(32px, 8vw, 52px);
+  font-weight: 800;
+  color: white;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+}
+.hero h1 span { color: #FCD34D; }
+
+.hero-khmer {
+  font-family: 'Noto Sans Khmer', sans-serif;
+  font-size: clamp(14px, 3.5vw, 18px);
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 20px;
+}
+
+.hero-tagline {
+  font-size: clamp(16px, 4vw, 22px);
+  color: rgba(255,255,255,0.92);
+  font-weight: 500;
+  max-width: 480px;
+  margin: 0 auto 12px;
+  line-height: 1.5;
+}
+
+.hero-sub {
+  font-family: 'Noto Sans Khmer', sans-serif;
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 32px;
+}
+
+/* ── SIGNUP CARD ── */
+.signup-card {
+  background: white;
+  border-radius: 24px;
+  padding: 32px 28px;
+  max-width: 440px;
+  margin: -40px auto 0;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 8px 40px rgba(108,63,212,0.18);
+}
+
+.signup-card h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-align: center;
+}
+.signup-card .sub {
+  font-size: 14px;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+.signup-card .sub-kh {
+  font-family: 'Noto Sans Khmer', sans-serif;
+  font-size: 13px;
+  color: var(--primary);
+}
+
+.form-group { margin-bottom: 14px; }
+.form-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.form-group input {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1.5px solid #E5E7EB;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+  color: var(--text);
+}
+.form-group input:focus { border-color: var(--primary); }
+.form-group input::placeholder { color: #9CA3AF; }
+
+.btn-signup {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #6C3FD4, #9333EA);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  margin-top: 6px;
+  transition: opacity 0.15s, transform 0.1s;
+  box-shadow: 0 4px 16px rgba(108,63,212,0.35);
+}
+.btn-signup:hover { opacity: 0.92; transform: translateY(-1px); }
+.btn-signup:active { opacity: 0.85; transform: scale(0.98); }
+
+.privacy-note {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+/* ── FEATURES ── */
+.features {
+  max-width: 440px;
+  margin: 36px auto 0;
+  padding: 0 24px;
+}
+
+.features h3 {
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--text);
+}
+
+.feature-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+}
+.feature-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.feature-text h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.feature-text p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.feature-text .kh {
+  font-family: 'Noto Sans Khmer', sans-serif;
+  font-size: 12px;
+  color: var(--primary);
+  margin-top: 3px;
+}
+
+/* ── SIM'S NOTE ── */
+.sim-note {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 0 24px 20px;
+}
+.sim-note-card {
+  background: linear-gradient(135deg, #EDE9FE, #F5F3FF);
+  border-radius: 20px;
+  padding: 24px;
+  border-left: 4px solid var(--primary);
+  text-align: center;
+}
+.sim-avatar { font-size: 48px; margin-bottom: 10px; }
+.sim-note-card p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+  font-style: italic;
+  margin-bottom: 10px;
+}
+.sim-note-card .sig {
+  font-weight: 700;
+  color: var(--primary);
+  font-style: normal;
+  font-size: 16px;
+}
+.sim-note-card .sig-kh {
+  font-family: 'Noto Sans Khmer', sans-serif;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center;
+  padding: 30px 24px 40px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.footer .kh {
+  font-family: 'Noto Sans Khmer', sans-serif;
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-emoji">✨</span>
+  <h1>Si<span>M</span>ply<br>Khmenglish</h1>
+  <div class="hero-khmer">កម្មវិធីរៀនភាសាអង់គ្លេសសម្រាប់គ្រួសារ និងមិត្តភ័ក្តិស៊ីម</div>
+  <div class="hero-tagline">Learn English the easy way — made by Sim, for her Khmer family and friends 🇰🇭</div>
+  <div class="hero-sub">ស្តាប់ • យល់ • និយាយ</div>
+</div>
+
+<!-- SIGNUP CARD -->
+<div style="padding: 0 16px;">
+  <div class="signup-card">
+    <h2>🙌 Join Sim's Class</h2>
+    <div class="sub">
+      Free forever. No experience needed.<br>
+      <span class="sub-kh">មិនចាំបាច់មានបទពិសោធន៍ • ឥតគិតថ្លៃ</span>
+    </div>
+
+    <form name="signup" method="POST" action="/english-coach.html" data-netlify="true">
+      <input type="hidden" name="form-name" value="signup">
+
+      <div class="form-group">
+        <label for="fname">Your first name</label>
+        <input type="text" id="fname" name="name" placeholder="e.g. Sokha" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" placeholder="yourname@gmail.com" required>
+      </div>
+
+      <button type="submit" class="btn-signup">
+        Start Learning →
+      </button>
+    </form>
+
+    <div class="privacy-note">
+      🔒 Your info stays private. No spam, ever.<br>
+      <span style="font-family:'Noto Sans Khmer',sans-serif">ព័ត៌មានរបស់អ្នកមានសុវត្ថិភាព</span>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="features">
+  <h3>What you will learn 📚</h3>
+
+  <div class="feature-item">
+    <div class="feature-icon">📷</div>
+    <div class="feature-text">
+      <h4>Read it to me</h4>
+      <p>Take a photo of any English text. The app reads it out loud, slowly and clearly.</p>
+      <div class="kh">ថតរូបអក្សរ ហើយស្តាប់ការអាន</div>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <div class="feature-icon">🔊</div>
+    <div class="feature-text">
+      <h4>Hear it in Khmer</h4>
+      <p>Every English sentence is explained in spoken Khmer so you really understand.</p>
+      <div class="kh">ស្តាប់ន័យភាសាខ្មែររបស់ប្រយោគអង់គ្លេស</div>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <div class="feature-icon">🎤</div>
+    <div class="feature-text">
+      <h4>Practice your voice</h4>
+      <p>Say the sentence out loud. The app tells you which words were right and which need more practice.</p>
+      <div class="kh">ហាត់និយាយ ហើយទទួលការវាយតម្លៃ</div>
+    </div>
+  </div>
+
+  <div class="feature-item">
+    <div class="feature-icon">🤖</div>
+    <div class="feature-text">
+      <h4>Ask Claude</h4>
+      <p>Confused about a sentence? Ask Claude for a simple explanation in Khmer and English.</p>
+      <div class="kh">សួរ Claude បើមិនយល់</div>
+    </div>
+  </div>
+</div>
+
+<!-- SIM'S NOTE -->
+<div class="sim-note">
+  <div class="sim-note-card">
+    <div class="sim-avatar">👩‍🏫</div>
+    <p>"I made this app for my family and friends. English is hard but we can learn together. Every day, little by little. I believe in you."</p>
+    <div class="sig">— Sim 💜</div>
+    <div class="sig-kh">ស៊ីម បង្កើតកម្មវិធីនេះ ដើម្បីជួយគ្រួសារ និងមិត្តភ័ក្តិ</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span class="kh">© 2026 SiMplyKhmenglish • បង្កើតដោយស្នេហា</span>
+  Made with ❤️ for the Khmer community in America
+</div>
+
+</body>
+</html>
