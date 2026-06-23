@@ -2,1101 +2,773 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="SiMplyKhmenglish">
-<title>SiMplyKhmenglish — Sim's English Coach</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>SiMplyKhmenglish — Learn Together</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 :root {
-  --primary: #6C3FD4;
-  --primary-light: #EDE9FE;
-  --primary-mid: #C4B5FD;
-  --secondary: #F59E0B;
-  --success: #10B981;
-  --error: #EF4444;
-  --warning: #F59E0B;
-  --bg: #F5F3FF;
+  --orange: #F97316;
+  --orange-light: #FFF7ED;
+  --orange-mid: #FED7AA;
+  --orange-dark: #C2410C;
+  --purple: #7C3AED;
+  --purple-light: #EDE9FE;
+  --purple-mid: #C4B5FD;
+  --green: #10B981;
+  --red: #EF4444;
+  --bg: #F8FAFC;
   --card: #FFFFFF;
-  --text: #1E1433;
-  --text-muted: #6B7280;
-  --border: #E5E7EB;
-  --nav-h: 68px;
+  --text: #1E293B;
+  --muted: #64748B;
+  --border: #E2E8F0;
+  --sidebar-w: 220px;
+  --header-h: 62px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+
+/* ══ APP SHELL ══ */
+.app-wrap {
+  display: grid;
+  grid-template-areas: "hd hd" "sb ct";
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-rows: var(--header-h) 1fr;
+  height: 100vh;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-html, body {
-  height: 100%;
-  overflow: hidden;
-}
-
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  max-width: 430px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ── HEADER ── */
-.header {
-  background: var(--primary);
-  color: white;
-  padding: 14px 16px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 10;
-}
-.header-center h1 { font-size: 17px; font-weight: 700; }
-.header-center .kh { font-family: 'Noto Sans Khmer', sans-serif; font-size: 12px; opacity: 0.8; margin-top: 1px; }
-.header-icon-btn {
-  background: rgba(255,255,255,0.15);
-  border: none;
-  color: white;
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-}
-
-/* ── SCROLL AREA ── */
-.scroll-area {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  padding: 14px 14px calc(var(--nav-h) + 14px);
-}
-
-/* ── BOTTOM NAV ── */
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 430px;
-  height: var(--nav-h);
+/* HEADER */
+.app-header {
+  grid-area: hd;
   background: white;
-  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   display: flex;
-  align-items: flex-start;
-  padding-top: 6px;
-  z-index: 100;
-  box-shadow: 0 -2px 12px rgba(0,0,0,0.06);
+  align-items: center;
+  padding: 0 20px;
+  gap: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  z-index: 50;
 }
-.nav-btn {
-  flex: 1;
+.logo { font-size: 20px; font-weight: 800; color: var(--purple); letter-spacing: -0.5px; white-space: nowrap; }
+.logo span { color: var(--orange); }
+.logo-kh { font-family: 'Noto Sans Khmer', sans-serif; font-size: 12px; color: var(--muted); flex: 1; }
+.header-badge { background: var(--orange-light); color: var(--orange-dark); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--orange-mid); white-space: nowrap; }
+.header-settings { background: none; border: none; font-size: 20px; cursor: pointer; padding: 4px; border-radius: 8px; transition: background 0.15s; }
+.header-settings:hover { background: var(--bg); }
+
+/* SIDEBAR */
+.app-sidebar {
+  grid-area: sb;
+  background: white;
+  border-right: 1px solid var(--border);
+  padding: 12px 10px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px 2px;
-  position: relative;
+  gap: 2px;
+  overflow-y: auto;
 }
-.nav-btn .icon { font-size: 22px; transition: transform 0.15s; }
-.nav-btn .label {
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--text-muted);
-  line-height: 1.2;
-  text-align: center;
+.sidebar-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); padding: 10px 10px 4px; margin-top: 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px; cursor: pointer;
+  border: none; background: none; width: 100%; text-align: left;
+  font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--muted); transition: all 0.15s;
 }
-.nav-btn .label-en {
-  display: block;
-  font-family: 'Inter', sans-serif;
-  font-size: 9px;
-  font-weight: 700;
-}
-.nav-btn .label-kh {
-  display: block;
-  font-family: 'Noto Sans Khmer', sans-serif;
-  font-size: 8px;
-  opacity: 0.75;
-}
-.nav-btn.active .label { color: var(--primary); }
-.nav-btn.active .label-en { color: var(--primary); }
-.nav-btn.active .label-kh { color: var(--primary); }
-.nav-btn.active .icon { transform: scale(1.12); }
-.nav-btn.active .label { color: var(--primary); font-weight: 700; }
-.nav-btn.active::after {
-  content: '';
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 28px; height: 3px;
-  background: var(--primary);
-  border-radius: 0 0 4px 4px;
-}
+.nav-item:hover { background: var(--bg); color: var(--text); }
+.nav-item .n-icon { font-size: 20px; width: 24px; text-align: center; flex-shrink: 0; }
+.nav-item .n-text { line-height: 1.25; }
+.nav-item .n-kh { font-family: 'Noto Sans Khmer', sans-serif; font-size: 10px; opacity: 0.7; display: block; }
+.nav-item.act-or { background: var(--orange-light); color: var(--orange-dark); font-weight: 700; }
+.nav-item.act-pu { background: var(--purple-light); color: var(--purple); font-weight: 700; }
 
-/* ── SCREENS ── */
+/* CONTENT */
+.app-content { grid-area: ct; overflow-y: auto; padding: 28px 32px 40px; -webkit-overflow-scrolling: touch; }
+
+/* SCREENS */
 .screen { display: none; }
 .screen.active { display: block; }
 
-/* ── CARDS ── */
-.card {
-  background: var(--card);
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 12px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
-}
+/* PAGE HEADING */
+.pg-title { font-size: 26px; font-weight: 800; color: var(--text); margin-bottom: 2px; }
+.pg-kh { font-family: 'Noto Sans Khmer', sans-serif; font-size: 13px; color: var(--muted); margin-bottom: 22px; }
 
-/* ── BUTTONS ── */
+/* ══ CARDS & BUTTONS ══ */
+.card { background: var(--card); border-radius: 14px; padding: 18px; border: 1px solid var(--border); }
 .btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  width: 100%;
-  padding: 13px 16px;
-  border-radius: 12px;
-  border: none;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%; padding: 11px 16px; border-radius: 10px; border: none;
+  font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif;
   transition: opacity 0.15s, transform 0.1s;
-  line-height: 1;
 }
 .btn:active { opacity: 0.82; transform: scale(0.98); }
-.btn:disabled { opacity: 0.45; pointer-events: none; }
-.btn-primary { background: var(--primary); color: white; }
-.btn-light { background: var(--primary-light); color: var(--primary); }
-.btn-outline { background: white; color: var(--primary); border: 2px solid var(--primary); }
-.btn-success { background: var(--success); color: white; }
-.btn-sm { width: auto; padding: 8px 14px; font-size: 13px; border-radius: 9px; }
+.btn:disabled { opacity: 0.4; pointer-events: none; }
+.btn-purple { background: var(--purple); color: white; }
+.btn-orange { background: var(--orange); color: white; }
+.btn-lpu { background: var(--purple-light); color: var(--purple); }
+.btn-lor { background: var(--orange-light); color: var(--orange-dark); }
+.btn-green { background: var(--green); color: white; }
+.btn-sm { width: auto; padding: 7px 14px; font-size: 12px; border-radius: 8px; }
 .btn-row { display: flex; gap: 8px; }
 .btn-row .btn { flex: 1; }
-
-/* ── SECTION TITLE ── */
-.sec-title { font-size: 19px; font-weight: 700; margin-bottom: 2px; }
-.sec-sub { font-family: 'Noto Sans Khmer', sans-serif; font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
-
-/* ── TOGGLE TABS ── */
-.tab-row {
-  display: flex;
-  background: #EDEBF8;
-  border-radius: 10px;
-  padding: 3px;
-  margin-bottom: 14px;
-}
-.tab-btn {
-  flex: 1;
-  padding: 8px 4px;
-  border: none;
-  background: none;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--text-muted);
-  transition: all 0.2s;
-  font-family: 'Inter', sans-serif;
-}
-.tab-btn.active {
-  background: white;
-  color: var(--primary);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-
-/* ── UPLOAD AREA ── */
-.upload-area {
-  border: 2px dashed var(--primary-mid);
-  border-radius: 14px;
-  padding: 28px 16px;
-  text-align: center;
-  cursor: pointer;
-  background: var(--primary-light);
-  display: block;
-  margin-bottom: 12px;
-  transition: border-color 0.2s;
-}
-.upload-area:active { border-color: var(--primary); }
-.upload-area .u-icon { font-size: 38px; margin-bottom: 8px; }
-.upload-area .u-main { font-size: 15px; font-weight: 600; color: var(--primary); }
-.upload-area .u-sub { font-family: 'Noto Sans Khmer', sans-serif; font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-
-/* ── IMAGE PREVIEW ── */
-#imgPreview { width: 100%; border-radius: 12px; margin-bottom: 10px; display: none; }
-
-/* ── OCR STATUS ── */
-.ocr-status {
-  text-align: center;
-  font-size: 13px;
-  color: var(--text-muted);
-  padding: 8px;
-  display: none;
-}
-
-/* ── TEXTAREA ── */
-textarea {
-  width: 100%;
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 12px;
-  font-size: 15px;
-  font-family: 'Inter', sans-serif;
-  resize: none;
-  min-height: 110px;
-  outline: none;
-  margin-bottom: 10px;
-  color: var(--text);
-  background: white;
-}
-textarea:focus { border-color: var(--primary); }
-
-/* ── SPEED CONTROL ── */
-.speed-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 6px 0;
-}
-.speed-lbl { font-size: 12px; color: var(--text-muted); }
-input[type=range] { flex: 1; accent-color: var(--primary); }
-#speedVal { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
-
-/* ── SENTENCE CARDS ── */
-.sent-card {
-  background: white;
-  border: 1.5px solid var(--border);
-  border-radius: 14px;
-  padding: 14px;
-  margin-bottom: 10px;
-  transition: border-color 0.2s;
-}
-.sent-card.playing { border-color: var(--primary); background: var(--primary-light); }
-.sent-tag {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  background: var(--primary-light);
-  color: var(--primary);
-  padding: 2px 8px;
-  border-radius: 6px;
-  margin-bottom: 8px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-.sent-english { font-size: 16px; font-weight: 500; line-height: 1.55; }
-.sent-khmer { font-family: 'Noto Sans Khmer', sans-serif; font-size: 14px; color: var(--primary); line-height: 1.7; margin-top: 8px; }
-.sent-divider { height: 1px; background: var(--border); margin: 10px 0; }
-
-/* ── WORD COLORS ── */
-.w-correct { color: var(--success); font-weight: 600; }
-.w-wrong { color: var(--error); text-decoration: underline wavy; font-weight: 600; }
-
-/* ── PROGRESS BAR ── */
-.prog-bar {
-  height: 6px;
-  background: var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 8px 0;
-}
-.prog-fill {
-  height: 100%;
-  border-radius: 10px;
-  background: var(--primary);
-  transition: width 0.4s ease;
-}
-
-/* ── RECORD BUTTON ── */
-.record-wrap { text-align: center; padding: 8px 0 4px; }
-.record-btn {
-  width: 76px; height: 76px;
-  border-radius: 50%;
-  background: var(--error);
-  border: none;
-  color: white;
-  font-size: 28px;
-  cursor: pointer;
-  box-shadow: 0 4px 18px rgba(239,68,68,0.35);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.15s;
-}
-.record-btn.rec { animation: pulse-rec 1s ease-in-out infinite; }
-@keyframes pulse-rec {
-  0%,100% { transform: scale(1); box-shadow: 0 4px 18px rgba(239,68,68,0.35); }
-  50% { transform: scale(1.08); box-shadow: 0 6px 28px rgba(239,68,68,0.55); }
-}
-.rec-hint { font-family: 'Noto Sans Khmer', sans-serif; font-size: 12px; color: var(--text-muted); margin-top: 8px; }
-
-/* ── FEEDBACK ── */
-.feedback-box {
-  background: #F9FAFB;
-  border-radius: 12px;
-  padding: 14px;
-  margin-top: 12px;
-}
-.fb-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-.fb-good { background: #D1FAE5; color: #065F46; }
-.fb-ok { background: #FEF3C7; color: #92400E; }
-.fb-low { background: #FEE2E2; color: #991B1B; }
-.fb-words { font-size: 15px; line-height: 2; margin: 8px 0; }
-.fb-meta { font-size: 11px; color: var(--text-muted); }
-
-/* ── PHONETIC CHIPS ── */
-.phonetic-box {
-  background: var(--primary-light);
-  border-radius: 10px;
-  padding: 12px;
-  margin-top: 10px;
-}
-.phonetic-box h5 { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip {
-  background: white;
-  border: 1px solid var(--primary-mid);
-  border-radius: 8px;
-  padding: 5px 12px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--primary);
-  transition: background 0.15s;
-}
-.chip:active { background: var(--primary-light); }
-
-/* ── EMPTY STATE ── */
-.empty {
-  text-align: center;
-  padding: 44px 20px;
-  color: var(--text-muted);
-}
-.empty .e-icon { font-size: 50px; margin-bottom: 12px; }
-.empty p { font-size: 14px; line-height: 1.6; }
-.empty .e-kh { font-family: 'Noto Sans Khmer', sans-serif; margin-top: 6px; font-size: 13px; }
-
-/* ── SETTINGS ── */
-.settings-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 13px 0;
-  border-bottom: 1px solid var(--border);
-}
-.settings-item:last-child { border: none; }
-.si-label { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
-.si-val { font-size: 14px; font-weight: 600; color: var(--primary); }
-.api-field {
-  width: 100%;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  padding: 10px 12px;
-  font-size: 14px;
-  outline: none;
-  margin-top: 8px;
-  font-family: 'Inter', sans-serif;
-}
-.api-field:focus { border-color: var(--primary); }
-
-/* ── MISC ── */
 .hidden { display: none !important; }
-.mt8 { margin-top: 8px; }
-.mb12 { margin-bottom: 12px; }
+.mt10 { margin-top: 10px; }
+.mt16 { margin-top: 16px; }
+.mb10 { margin-bottom: 10px; }
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
 
-/* ══ GUIDE SUB-TABS ══ */
-.guide-tab-row {
-  display: flex;
-  background: #F1F5F9;
-  border-radius: 10px;
-  padding: 3px;
-  margin-bottom: 14px;
-  gap: 3px;
+/* TAB ROW */
+.tab-row { display: flex; background: #F1F5F9; border-radius: 10px; padding: 3px; margin-bottom: 14px; gap: 3px; }
+.tab-btn {
+  flex: 1; padding: 8px 6px; border: none; background: none; border-radius: 8px;
+  font-size: 13px; font-weight: 600; cursor: pointer; color: var(--muted);
+  font-family: 'Inter', sans-serif; transition: all 0.2s;
 }
-.guide-tab-btn {
-  flex: 1;
-  padding: 9px 6px;
-  border: none;
-  background: none;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  color: #6B7280;
-  transition: all 0.2s;
-  font-family: 'Inter', sans-serif;
-}
-.guide-tab-btn.active-purple {
-  background: white;
-  color: var(--primary);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-.guide-tab-btn.active-orange {
-  background: white;
-  color: #C2410C;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-.guide-section { display: block; }
-.guide-section.hidden { display: none !important; }
+.tab-btn.active { background: white; color: var(--purple); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
 
-/* ══ KHMER ALPHABET — ORANGE THEME ══ */
-.alpha-hero {
-  background: linear-gradient(135deg, #EA580C 0%, #F97316 50%, #FBBF24 100%);
-  border-radius: 18px;
-  padding: 24px 20px;
-  text-align: center;
-  color: white;
-  margin-bottom: 14px;
-  position: relative;
-  overflow: hidden;
-}
-.alpha-hero::after {
-  content: '';
-  position: absolute;
-  width: 180px; height: 180px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 50%;
-  bottom: -60px; right: -40px;
-}
-.alpha-hero h2 { font-size: 22px; font-weight: 800; margin-bottom: 2px; }
-.alpha-hero .kh-sub {
-  font-family: 'Noto Sans Khmer', sans-serif;
-  font-size: 14px;
-  opacity: 0.9;
-  margin-top: 3px;
-}
-.alpha-hero .tip {
-  font-size: 12px;
-  opacity: 0.85;
-  margin-top: 8px;
-  line-height: 1.5;
-  background: rgba(255,255,255,0.15);
-  border-radius: 8px;
-  padding: 7px 10px;
-}
-
-.alpha-section-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 16px 0 10px;
-}
-.alpha-badge {
-  background: #FFF7ED;
-  border: 2px solid #FED7AA;
-  color: #9A3412;
-  border-radius: 8px;
-  padding: 4px 12px;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-.alpha-badge-kh {
-  font-family: 'Noto Sans Khmer', sans-serif;
-  font-size: 12px;
-  color: #92400E;
-}
-
-/* Letter cards */
-.letter-grid {
+/* ══ PICTURE BOOK ══ */
+.cat-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  margin-bottom: 6px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
 }
-.number-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  margin-bottom: 6px;
+.cat-card {
+  background: white; border: 2px solid var(--border); border-radius: 18px;
+  padding: 22px 12px; text-align: center; cursor: pointer; transition: all 0.18s;
 }
+.cat-card:hover { border-color: var(--orange); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(249,115,22,0.15); }
+.cat-icon { font-size: 52px; display: block; margin-bottom: 10px; line-height: 1; }
+.cat-en { font-size: 15px; font-weight: 700; color: var(--text); }
+.cat-kh { font-family: 'Noto Sans Khmer', sans-serif; font-size: 12px; color: var(--muted); margin-top: 2px; }
+.cat-count { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--orange-light); border: none; color: var(--orange-dark);
+  font-weight: 700; font-size: 14px; padding: 8px 16px; border-radius: 10px;
+  cursor: pointer; margin-bottom: 18px; font-family: 'Inter', sans-serif; transition: opacity 0.15s;
+}
+.back-btn:hover { opacity: 0.8; }
+
+.word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; }
+.word-card {
+  background: white; border: 2px solid var(--border); border-radius: 18px;
+  padding: 22px 14px 16px; text-align: center; transition: border-color 0.15s;
+}
+.word-card:hover { border-color: var(--orange-mid); }
+.word-card.playing { border-color: var(--orange); background: var(--orange-light); box-shadow: 0 0 0 3px rgba(249,115,22,0.15); }
+.word-emoji { font-size: 72px; display: block; line-height: 1.2; margin-bottom: 10px; }
+.word-en { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+.word-kh { font-family: 'Noto Sans Khmer', sans-serif; font-size: 17px; color: var(--purple); margin-bottom: 14px; line-height: 1.4; }
+.word-audio-row { display: flex; gap: 6px; }
+.word-btn-en { flex: 1; padding: 8px 4px; background: var(--purple-light); color: var(--purple); border: none; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.15s; }
+.word-btn-kh { flex: 1; padding: 8px 4px; background: var(--orange-light); color: var(--orange-dark); border: none; border-radius: 9px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Noto Sans Khmer', sans-serif; transition: opacity 0.15s; }
+.word-btn-en:active, .word-btn-kh:active { opacity: 0.75; }
+
+/* ══ KHMER ABC ══ */
+.abc-hero {
+  background: linear-gradient(135deg, #EA580C 0%, #F97316 55%, #FBBF24 100%);
+  border-radius: 18px; padding: 22px 24px; color: white; margin-bottom: 22px;
+  display: flex; align-items: center; gap: 16px;
+}
+.abc-hero-icon { font-size: 56px; flex-shrink: 0; }
+.abc-hero h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+.abc-hero p { font-size: 13px; opacity: 0.9; line-height: 1.5; }
+.abc-hero .kh { font-family: 'Noto Sans Khmer', sans-serif; }
+
+.alpha-head { display: flex; align-items: center; gap: 8px; margin: 18px 0 10px; }
+.alpha-badge { background: var(--orange-light); color: var(--orange-dark); border: 1.5px solid var(--orange-mid); border-radius: 8px; padding: 3px 12px; font-size: 12px; font-weight: 700; }
+.alpha-badge-kh { font-family: 'Noto Sans Khmer', sans-serif; font-size: 12px; color: var(--muted); }
+
+.letter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 8px; margin-bottom: 8px; }
+.number-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; margin-bottom: 8px; }
+
 .letter-card {
-  background: white;
-  border: 2px solid #FED7AA;
-  border-radius: 14px;
-  padding: 14px 6px 10px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.15s;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
+  background: white; border: 2px solid var(--orange-mid); border-radius: 13px;
+  padding: 14px 6px 10px; text-align: center; cursor: pointer; user-select: none; transition: all 0.15s;
 }
-.letter-card:active {
-  background: #FFF7ED;
-  transform: scale(0.93);
-  border-color: #F97316;
-}
-.letter-card.playing {
-  border-color: #F97316;
-  background: #FFF7ED;
-  box-shadow: 0 0 0 3px #FED7AA;
-}
-.letter-char {
-  font-family: 'Noto Sans Khmer', sans-serif;
-  font-size: 46px;
-  line-height: 1.3;
-  color: #7C2D12;
-  display: block;
-}
-.letter-rom {
-  font-size: 11px;
-  font-weight: 600;
-  color: #92400E;
-  margin-top: 3px;
-  line-height: 1.3;
-}
-.letter-audio-dot {
-  font-size: 10px;
-  margin-top: 4px;
-  color: #F97316;
-}
+.letter-card:hover { border-color: var(--orange); transform: translateY(-1px); }
+.letter-card.playing { border-color: var(--orange); background: var(--orange-light); box-shadow: 0 0 0 3px rgba(249,115,22,0.15); }
+.l-char { font-family: 'Noto Sans Khmer', sans-serif; font-size: 48px; color: #7C2D12; display: block; line-height: 1.3; }
+.l-rom { font-size: 11px; font-weight: 600; color: #92400E; margin-top: 2px; }
+.l-dot { font-size: 10px; color: var(--orange); margin-top: 3px; }
 
-/* Alphabet tip card */
-.alpha-tip-card {
-  background: linear-gradient(135deg, #FFF7ED, #FEF3C7);
-  border: 2px solid #F97316;
-  border-radius: 16px;
-  padding: 18px;
-  text-align: center;
-  margin-top: 8px;
-  margin-bottom: 10px;
+/* ══ ENGLISH COACH ══ */
+.coach-cols { display: grid; grid-template-columns: 380px 1fr; gap: 20px; }
+.upload-area {
+  border: 2px dashed var(--purple-mid); border-radius: 14px; padding: 28px;
+  text-align: center; cursor: pointer; background: var(--purple-light);
+  display: block; margin-bottom: 12px; transition: border-color 0.2s;
 }
+.upload-area:hover { border-color: var(--purple); }
+.u-icon { font-size: 40px; margin-bottom: 8px; display: block; }
+.u-main { font-size: 15px; font-weight: 600; color: var(--purple); }
+.u-sub { font-family: 'Noto Sans Khmer', sans-serif; font-size: 12px; color: var(--muted); margin-top: 4px; }
+#imgPreview { width: 100%; border-radius: 12px; margin-bottom: 10px; display: none; }
+#ocrStatus { font-size: 13px; color: var(--muted); padding: 6px; display: none; }
 
-/* ── KHMER AUDIO BIG BUTTON ── */
-.btn-khmer-audio {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 100%;
-  padding: 16px;
-  border-radius: 14px;
-  border: none;
-  font-size: 17px;
-  font-weight: 700;
-  cursor: pointer;
-  background: linear-gradient(135deg, #7C3AED, #A855F7);
-  color: white;
-  box-shadow: 0 4px 14px rgba(124,58,237,0.35);
-  transition: opacity 0.15s, transform 0.1s;
-  font-family: 'Noto Sans Khmer', sans-serif;
-  margin: 10px 0 6px;
+textarea {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 10px; padding: 12px;
+  font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical; min-height: 120px;
+  outline: none; color: var(--text); background: white;
 }
-.btn-khmer-audio:active { opacity: 0.85; transform: scale(0.98); }
+textarea:focus { border-color: var(--purple); }
 
-/* ── ASK CLAUDE BUTTON ── */
+.speed-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+.speed-lbl { font-size: 12px; color: var(--muted); white-space: nowrap; }
+input[type=range] { flex: 1; accent-color: var(--purple); }
+#speedVal { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+.sent-card { background: white; border: 1.5px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 10px; }
+.sent-card.playing { border-color: var(--purple); background: var(--purple-light); }
+.sent-tag { display: inline-block; font-size: 10px; font-weight: 700; background: var(--purple-light); color: var(--purple); padding: 2px 8px; border-radius: 6px; margin-bottom: 8px; text-transform: uppercase; }
+.sent-en { font-size: 15px; font-weight: 500; line-height: 1.6; }
+.sent-kh { font-family: 'Noto Sans Khmer', sans-serif; font-size: 13px; color: var(--purple); margin-top: 8px; line-height: 1.8; }
+
+.btn-kh-audio {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 13px; background: linear-gradient(135deg, #7C3AED, #A855F7);
+  color: white; border: none; border-radius: 11px; font-size: 15px; font-weight: 700;
+  cursor: pointer; font-family: 'Noto Sans Khmer', sans-serif; margin: 8px 0; transition: opacity 0.15s;
+}
+.btn-kh-audio:active { opacity: 0.85; }
+
 .btn-ask-claude {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 13px 16px;
-  border-radius: 12px;
-  border: none;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  background: linear-gradient(135deg, #F59E0B, #EF4444);
-  color: white;
-  box-shadow: 0 3px 10px rgba(245,158,11,0.3);
-  transition: opacity 0.15s;
-  font-family: 'Inter', sans-serif;
-  margin-top: 6px;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  width: 100%; padding: 11px; background: linear-gradient(135deg, #F59E0B, #EF4444);
+  color: white; border: none; border-radius: 10px; font-size: 13px; font-weight: 700;
+  cursor: pointer; font-family: 'Inter', sans-serif; margin-top: 6px; transition: opacity 0.15s;
 }
 .btn-ask-claude:active { opacity: 0.85; }
 
-/* ── CLAUDE MODAL ── */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.55);
-  z-index: 200;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+/* Practice */
+.practice-card { background: white; border: 1.5px solid var(--border); border-radius: 14px; padding: 20px; }
+.prog-bar { height: 6px; background: var(--border); border-radius: 10px; overflow: hidden; margin: 8px 0; }
+.prog-fill { height: 100%; border-radius: 10px; background: var(--purple); transition: width 0.4s; }
+.record-wrap { text-align: center; padding: 10px 0; }
+.record-btn {
+  width: 80px; height: 80px; border-radius: 50%; background: var(--red); border: none; color: white;
+  font-size: 30px; cursor: pointer; box-shadow: 0 4px 18px rgba(239,68,68,0.35);
+  display: inline-flex; align-items: center; justify-content: center;
 }
+.record-btn.rec { animation: pulse-rec 1s ease-in-out infinite; }
+@keyframes pulse-rec { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+.rec-hint { font-family: 'Noto Sans Khmer', sans-serif; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+
+.fb-box { background: #F8FAFC; border-radius: 12px; padding: 14px; margin-top: 12px; }
+.fb-badge { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 20px; font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.fb-good { background: #D1FAE5; color: #065F46; }
+.fb-ok { background: #FEF3C7; color: #92400E; }
+.fb-low { background: #FEE2E2; color: #991B1B; }
+.fb-words { font-size: 15px; line-height: 2.1; margin: 8px 0; }
+.w-ok { color: var(--green); font-weight: 600; }
+.w-bad { color: var(--red); text-decoration: underline wavy; font-weight: 600; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip { background: white; border: 1px solid var(--purple-mid); border-radius: 8px; padding: 5px 12px; font-size: 13px; font-weight: 600; cursor: pointer; color: var(--purple); }
+
+/* Empty state */
+.empty { text-align: center; padding: 50px 20px; color: var(--muted); }
+.empty .e-icon { font-size: 56px; margin-bottom: 14px; }
+.empty p { font-size: 14px; line-height: 1.6; }
+.empty .e-kh { font-family: 'Noto Sans Khmer', sans-serif; margin-top: 6px; }
+
+/* Settings */
+.api-field { width: 100%; border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 12px; font-size: 14px; outline: none; margin-top: 8px; font-family: 'Inter', sans-serif; }
+.api-field:focus { border-color: var(--purple); }
+.s-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.s-row:last-child { border: none; }
+
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: flex; align-items: center; justify-content: center; }
 .modal-overlay.hidden { display: none !important; }
-.modal-box {
-  background: white;
-  border-radius: 24px 24px 0 0;
-  padding: 24px 20px 36px;
-  width: 100%;
-  max-width: 430px;
-  max-height: 80vh;
-  overflow-y: auto;
+.modal-box { background: white; border-radius: 20px; padding: 28px; width: 90%; max-width: 480px; max-height: 80vh; overflow-y: auto; }
+.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 16px; line-height: 1.5; }
+.prompt-box { background: #F3F4F6; border-radius: 10px; padding: 14px; font-size: 13px; line-height: 1.6; margin-bottom: 16px; font-style: italic; border-left: 3px solid var(--purple); }
+
+/* ══ MOBILE ══ */
+.mob-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 64px; background: white; border-top: 1px solid var(--border); z-index: 100; box-shadow: 0 -2px 10px rgba(0,0,0,0.06); }
+.mob-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; border: none; background: none; cursor: pointer; font-family: 'Inter', sans-serif; }
+.mob-btn .m-ic { font-size: 22px; }
+.mob-btn .m-en { font-size: 9px; font-weight: 700; color: var(--muted); }
+.mob-btn .m-kh { font-family: 'Noto Sans Khmer', sans-serif; font-size: 8px; color: var(--muted); }
+.mob-btn.act-or .m-en, .mob-btn.act-or .m-kh { color: var(--orange-dark); }
+.mob-btn.act-pu .m-en, .mob-btn.act-pu .m-kh { color: var(--purple); }
+
+@media (max-width: 860px) {
+  .app-wrap { grid-template-areas: "hd" "ct"; grid-template-columns: 1fr; grid-template-rows: var(--header-h) 1fr; }
+  .app-sidebar { display: none; }
+  .app-content { padding: 14px 14px 80px; }
+  .mob-nav { display: flex; }
+  .coach-cols { grid-template-columns: 1fr; }
+  .word-grid { grid-template-columns: repeat(2, 1fr); }
+  .number-grid { grid-template-columns: repeat(5, 1fr); }
+  .letter-grid { grid-template-columns: repeat(4, 1fr); }
+  .cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .abc-hero { flex-direction: column; text-align: center; }
+  .pg-title { font-size: 20px; }
 }
-.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-.modal-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
-.prompt-box {
-  background: #F3F4F6;
-  border-radius: 12px;
-  padding: 14px;
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 16px;
-  color: var(--text);
-  font-style: italic;
-  border-left: 3px solid var(--primary);
+@media (max-width: 480px) {
+  .word-grid { grid-template-columns: repeat(2, 1fr); }
+  .letter-grid { grid-template-columns: repeat(3, 1fr); }
+  .l-char { font-size: 40px; }
 }
-.modal-steps { font-size: 13px; color: var(--text-muted); line-height: 1.9; margin-bottom: 16px; }
-.modal-steps strong { color: var(--text); }
 </style>
 </head>
 <body>
+<div class="app-wrap">
 
-<!-- HEADER -->
-<div class="header">
-  <div style="width:36px"></div>
-  <div class="header-center" style="text-align:center">
-    <h1>✨ SiMplyKhmenglish</h1>
-    <div class="kh">កម្មវិធីរៀនភាសាអង់គ្លេសសម្រាប់ស៊ីម</div>
-  </div>
-  <button class="header-icon-btn" onclick="goSettings()">⚙️</button>
-</div>
+  <!-- ── HEADER ── -->
+  <header class="app-header">
+    <div class="logo">Si<span>M</span>ply<span>Kh</span>menglish</div>
+    <div class="logo-kh">រៀនភាសាអង់គ្លេសសម្រាប់គ្រួសារខ្មែរ</div>
+    <div class="header-badge">🇰🇭 Free Forever</div>
+    <button class="header-settings" onclick="goSettings()" title="Settings">⚙️</button>
+  </header>
 
-<!-- SCROLL AREA -->
-<div class="scroll-area" id="scrollArea">
+  <!-- ── SIDEBAR ── -->
+  <aside class="app-sidebar">
+    <div class="sidebar-label">👨‍👩‍👧 Family Learning</div>
+    <button class="nav-item act-or" id="nb-book" onclick="goScreen('book')">
+      <span class="n-icon">📚</span>
+      <span class="n-text">Picture Book<span class="n-kh">សៀវភៅរូបភាព</span></span>
+    </button>
+    <button class="nav-item" id="nb-abc" onclick="goScreen('abc')">
+      <span class="n-icon">🔤</span>
+      <span class="n-text">Khmer Alphabet<span class="n-kh">ព្យញ្ជនៈ • ស្រៈ</span></span>
+    </button>
+    <div class="sidebar-label">🎓 For Adults</div>
+    <button class="nav-item" id="nb-read" onclick="goScreen('read')">
+      <span class="n-icon">📖</span>
+      <span class="n-text">English Coach<span class="n-kh">ហាត់ភាសាអង់គ្លេស</span></span>
+    </button>
+  </aside>
 
-  <!-- ══ SCREEN 1: READ ══ -->
-  <div class="screen active" id="s-read">
-    <div class="sec-title">📖 Read it to me</div>
-    <div class="sec-sub">ថតរូប ឬ វាយអក្សរ ហើយស្តាប់</div>
+  <!-- ── CONTENT ── -->
+  <main class="app-content" id="appContent">
 
-    <div class="tab-row">
-      <button class="tab-btn active" id="t-camera" onclick="switchTab('camera')">📷 Take Photo</button>
-      <button class="tab-btn" id="t-type" onclick="switchTab('type')">⌨️ Type Text</button>
-    </div>
-
-    <!-- Camera input -->
-    <div id="mode-camera">
-      <label class="upload-area" for="photoIn">
-        <div class="u-icon">📷</div>
-        <div class="u-main">Tap to take photo</div>
-        <div class="u-sub">ថតរូបអក្សរអង់គ្លេស</div>
-      </label>
-      <input type="file" id="photoIn" accept="image/*" capture="environment" style="display:none" onchange="onPhoto(event)">
-      <img id="imgPreview" alt="preview">
-      <div class="ocr-status" id="ocrStatus"></div>
-    </div>
-
-    <!-- Type input -->
-    <div class="hidden" id="mode-type">
-      <textarea id="typeInput" placeholder="Type or paste English text here...&#10;&#10;Example: My name is Mary. I live in Australia. I love to read books."></textarea>
-      <button class="btn btn-primary" onclick="onTypeSubmit()">✨ Start Learning</button>
-    </div>
-
-    <!-- Speed -->
-    <div class="card mt8" id="speedCard">
-      <div style="font-size:13px;font-weight:600;margin-bottom:8px;">🔊 Reading Speed</div>
-      <div class="speed-row">
-        <span class="speed-lbl">🐢 Slow</span>
-        <input type="range" id="speedRange" min="0.4" max="1.2" step="0.1" value="0.65" oninput="onSpeedChange(this.value)">
-        <span class="speed-lbl">Fast 🐇</span>
+    <!-- ══ PICTURE BOOK ══ -->
+    <div class="screen active" id="s-book">
+      <div class="pg-title">📚 Picture Book</div>
+      <div class="pg-kh">ចុចរូបភាពដើម្បីស្តាប់ • Tap any picture to hear it in English and Khmer</div>
+      <div id="book-cats">
+        <div class="cat-grid" id="catGrid"></div>
       </div>
-      <div id="speedVal">Speed: 0.65x — best for learning</div>
-    </div>
-
-    <!-- Sentences output -->
-    <div id="sentOut"></div>
-
-    <!-- Play all -->
-    <div class="hidden" id="playAllWrap">
-      <button class="btn btn-success" id="playAllBtn" onclick="playAll()">▶️ Play All Sentences</button>
-    </div>
-  </div>
-
-  <!-- ══ SCREEN 2: KHMER ══ -->
-  <div class="screen" id="s-khmer">
-    <div class="sec-title">🇰🇭 Khmer Helper</div>
-    <div class="sec-sub">ន័យភាសាខ្មែររបស់អក្សរអង់គ្លេស</div>
-    <div id="khmerOut">
-      <div class="empty">
-        <div class="e-icon">🇰🇭</div>
-        <p>First add text in the <strong>Read it to me</strong> tab</p>
-        <p class="e-kh">ដំបូង ចូរទៅផ្ទាំង "Read it to me"</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ SCREEN 3: PRACTICE ══ -->
-  <div class="screen" id="s-practice">
-    <div class="sec-title">🎤 Practice My Voice</div>
-    <div class="sec-sub">ហាត់និយាយ ហើយស្តាប់ការវាយតម្លៃ</div>
-    <div id="practiceOut">
-      <div class="empty">
-        <div class="e-icon">🎤</div>
-        <p>First add text in the <strong>Read it to me</strong> tab</p>
-        <p class="e-kh">ដំបូង ចូរទៅផ្ទាំង "Read it to me"</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ SCREEN 4: SETTINGS ══ -->
-  <div class="screen" id="s-settings">
-    <div class="sec-title">⚙️ Settings</div>
-    <div class="sec-sub">កំណត់ API Key</div>
-
-    <div class="card">
-      <div style="font-weight:700;font-size:15px">Google Translate API Key</div>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:4px;font-family:'Noto Sans Khmer',sans-serif">
-        បន្ថែម API Key ដើម្បីទទួលបានការបកប្រែប្រសើរ
-      </div>
-      <input class="api-field" type="password" id="apiKeyIn" placeholder="AIza..." oninput="saveKey()">
-      <div style="font-size:11px;color:var(--text-muted);margin-top:6px">
-        No key? MyMemory translation is used automatically — free and good for daily practice.
+      <div id="book-words" class="hidden">
+        <button class="back-btn" onclick="showCats()">← All Categories</button>
+        <div class="pg-title" id="wPgTitle" style="font-size:22px;margin-bottom:2px"></div>
+        <div class="pg-kh" id="wPgKh"></div>
+        <div class="word-grid" id="wordGrid"></div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="settings-item">
-        <div><div style="font-weight:600">Translation</div><div class="si-label" id="translLbl">Loading...</div></div>
-        <div style="font-size:22px">🌐</div>
-      </div>
-      <div class="settings-item">
-        <div><div style="font-weight:600">Text-to-Speech</div><div class="si-label">Web Speech API (free)</div></div>
-        <div style="font-size:22px">🔊</div>
-      </div>
-      <div class="settings-item">
-        <div><div style="font-weight:600">Voice Recognition</div><div class="si-label">Web Speech API (free)</div></div>
-        <div style="font-size:22px">🎤</div>
-      </div>
-    </div>
+    <!-- ══ KHMER ALPHABET ══ -->
+    <div class="screen" id="s-abc">
+      <div class="pg-title">🔤 Khmer Alphabet</div>
+      <div class="pg-kh">ចុចអក្សរដើម្បីស្តាប់ • Tap any letter or number to hear it</div>
 
-    <div class="card">
-      <div style="font-weight:700;font-size:15px;margin-bottom:8px">How to save to home screen</div>
-      <div style="font-size:13px;color:var(--text-muted);line-height:1.7">
-        <strong>iPhone:</strong> Tap the Share button → "Add to Home Screen"<br>
-        <strong>Android:</strong> Tap the menu (⋮) → "Add to Home Screen"<br><br>
-        <span style="font-family:'Noto Sans Khmer',sans-serif;font-size:12px">វានឹងក្លាយជាដូចកម្មវិធីទូរស័ព្ទ</span>
-      </div>
-    </div>
-
-    <button class="btn btn-light" onclick="goBack()" style="margin-top:4px">← Back</button>
-  </div>
-
-  <!-- ══ SCREEN 5: GUIDE + KHMER ALPHABET ══ -->
-  <div class="screen" id="s-guide">
-    <div class="sec-title">📚 Guide & Learn</div>
-    <div class="sec-sub" style="font-family:'Noto Sans Khmer',sans-serif">របៀបប្រើ • ព្យញ្ជនៈ • ស្រៈ</div>
-
-    <!-- Sub-tab toggle -->
-    <div class="guide-tab-row">
-      <button class="guide-tab-btn active-purple" id="gt-howto" onclick="switchGuideTab('howto')">📚 How to Use</button>
-      <button class="guide-tab-btn" id="gt-alphabet" onclick="switchGuideTab('alphabet')">🔤 Khmer Alphabet</button>
-    </div>
-
-    <!-- ── HOW TO USE section ── -->
-    <div id="guide-howto" class="guide-section">
-
-    <!-- Intro card -->
-    <div class="card" style="background:linear-gradient(135deg,#6C3FD4,#9333EA);color:white;text-align:center">
-      <div style="font-size:40px;margin-bottom:8px">👩‍🏫</div>
-      <div style="font-size:16px;font-weight:700;margin-bottom:6px">Welcome, Sim! សួស្ដី!</div>
-      <div style="font-size:13px;opacity:0.9;line-height:1.6">Tap the speaker button on each step to hear the instructions in Khmer.</div>
-      <div style="font-family:'Noto Sans Khmer',sans-serif;font-size:12px;opacity:0.8;margin-top:4px">ចុចប៊ូតុងស្តាប់ក្នុងជំហានម្តងៗ</div>
-    </div>
-
-    <!-- Step 1 -->
-    <div class="card" id="step1">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <div style="background:var(--primary);color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">1</div>
-        <div style="font-size:16px;font-weight:700">Take a Photo or Type Text</div>
-      </div>
-
-      <!-- Illustration -->
-      <div style="background:#F5F3FF;border-radius:12px;padding:20px;text-align:center;margin-bottom:12px">
-        <div style="font-size:56px">📷</div>
-        <div style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px">
-          <div style="background:white;border:2px solid var(--primary);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:600">Photo</div>
-          <div style="color:var(--text-muted);font-weight:700">OR</div>
-          <div style="background:white;border:2px solid var(--primary);border-radius:8px;padding:8px 12px;font-size:12px;font-weight:600">⌨️ Type</div>
+      <div class="abc-hero">
+        <div class="abc-hero-icon">🎯</div>
+        <div>
+          <h2>Learn 3–5 letters each day</h2>
+          <p>Tap a letter → listen → try to remember the sound before tapping again.</p>
+          <p class="kh" style="margin-top:4px">ហាត់រៀន ៣ ទៅ ៥ អក្សរ ជារៀងរាល់ថ្ងៃ</p>
         </div>
       </div>
 
-      <div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:10px">
-        Go to the <strong>📖 Read</strong> tab. Take a photo of any English text — a letter, a sign, a book. Or type English words in the text box.
-      </div>
-      <div style="font-family:'Noto Sans Khmer',sans-serif;font-size:13px;color:var(--primary);background:var(--primary-light);padding:10px;border-radius:10px;line-height:1.7;margin-bottom:12px">
-        ទៅផ្ទាំង 📖 ហើយថតរូបអក្សរអង់គ្លេស ឬវាយអក្សរដោយផ្ទាល់
-      </div>
-      <button class="btn-khmer-audio" onclick="guideSpeak(1)">🔊 ស្តាប់ជំហានទី ១</button>
-    </div>
+      <div class="alpha-head"><div class="alpha-badge">Consonants</div><div class="alpha-badge-kh">ព្យញ្ជនៈ — 33 letters</div></div>
+      <div class="letter-grid" id="alpha-cons"></div>
 
-    <!-- Step 2 -->
-    <div class="card" id="step2">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <div style="background:var(--primary);color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">2</div>
-        <div style="font-size:16px;font-weight:700">Listen to English</div>
-      </div>
-
-      <!-- Illustration -->
-      <div style="background:#F0FDF4;border-radius:12px;padding:20px;text-align:center;margin-bottom:12px">
-        <div style="font-size:56px">🔊</div>
-        <div style="margin-top:10px">
-          <div style="background:#D1FAE5;border-radius:8px;padding:8px 14px;display:inline-block;font-size:13px;font-weight:600;color:#065F46">"Hello, my name is Sim."</div>
-        </div>
-        <div style="margin-top:8px;display:flex;justify-content:center;gap:8px">
-          <div style="width:8px;height:8px;background:#10B981;border-radius:50%"></div>
-          <div style="width:8px;height:8px;background:#10B981;border-radius:50%;opacity:0.6"></div>
-          <div style="width:8px;height:8px;background:#10B981;border-radius:50%;opacity:0.3"></div>
-        </div>
-      </div>
-
-      <div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:10px">
-        Tap <strong>🔊 Listen</strong> on any sentence. The app reads it out loud slowly and clearly. Use the speed slider to make it slower if needed.
-      </div>
-      <div style="font-family:'Noto Sans Khmer',sans-serif;font-size:13px;color:var(--primary);background:var(--primary-light);padding:10px;border-radius:10px;line-height:1.7;margin-bottom:12px">
-        ចុច 🔊 ហើយស្តាប់ការអានប្រយោគអង់គ្លេស។ អ្នកអាចបន្ថយល្បឿនប្រសិនបើលឺមិនច្បាស់
-      </div>
-      <button class="btn-khmer-audio" onclick="guideSpeak(2)">🔊 ស្តាប់ជំហានទី ២</button>
-    </div>
-
-    <!-- Step 3 -->
-    <div class="card" id="step3">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <div style="background:var(--primary);color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">3</div>
-        <div style="font-size:16px;font-weight:700">Hear the Khmer Meaning</div>
-      </div>
-
-      <!-- Illustration -->
-      <div style="background:#FFF7ED;border-radius:12px;padding:20px;text-align:center;margin-bottom:12px">
-        <div style="font-size:48px">🇰🇭</div>
-        <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px;align-items:center">
-          <div style="background:white;border:2px solid #C4B5FD;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600">English sentence</div>
-          <div style="font-size:18px">↓</div>
-          <div style="background:#EDE9FE;border-radius:8px;padding:8px 14px;font-family:'Noto Sans Khmer',sans-serif;font-size:13px;color:var(--primary);font-weight:600">ន័យខ្មែរ 🔊</div>
-        </div>
-      </div>
-
-      <div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:10px">
-        Go to the <strong>🇰🇭 Khmer</strong> tab. Tap the big purple button to hear each sentence explained in Khmer.
-      </div>
-      <div style="font-family:'Noto Sans Khmer',sans-serif;font-size:13px;color:var(--primary);background:var(--primary-light);padding:10px;border-radius:10px;line-height:1.7;margin-bottom:12px">
-        ទៅផ្ទាំង 🇰🇭 ហើយចុចប៊ូតុងព័រ្ណម៉ាស់ធំ ដើម្បីស្តាប់ន័យខ្មែររបស់ប្រយោគអង់គ្លេស
-      </div>
-      <button class="btn-khmer-audio" onclick="guideSpeak(3)">🔊 ស្តាប់ជំហានទី ៣</button>
-    </div>
-
-    <!-- Step 4 -->
-    <div class="card" id="step4">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <div style="background:var(--primary);color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">4</div>
-        <div style="font-size:16px;font-weight:700">Practice Your Voice</div>
-      </div>
-
-      <!-- Illustration -->
-      <div style="background:#FFF1F2;border-radius:12px;padding:20px;text-align:center;margin-bottom:12px">
-        <div style="font-size:48px">🎤</div>
-        <div style="margin-top:10px;display:flex;justify-content:center;gap:10px;align-items:center">
-          <div style="background:#D1FAE5;color:#065F46;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700">✅ Hello</div>
-          <div style="background:#FEE2E2;color:#991B1B;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700;text-decoration:underline wavy">my</div>
-          <div style="background:#D1FAE5;color:#065F46;border-radius:8px;padding:6px 10px;font-size:12px;font-weight:700">✅ name</div>
-        </div>
-        <div style="margin-top:8px;background:#EDE9FE;border-radius:8px;padding:6px 14px;display:inline-block;font-size:13px;font-weight:700;color:var(--primary)">Score: 85% 🌟</div>
-      </div>
-
-      <div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:10px">
-        Go to <strong>🎤 Practice</strong> tab. Tap the red button and say the sentence. Green words = correct. Red words = practice more. Tap any red word to hear it again.
-      </div>
-      <div style="font-family:'Noto Sans Khmer',sans-serif;font-size:13px;color:var(--primary);background:var(--primary-light);padding:10px;border-radius:10px;line-height:1.7;margin-bottom:12px">
-        ទៅផ្ទាំង 🎤 ចុចប៊ូតុងក្រហម ហើយនិយាយប្រយោគ។ ពណ៌បៃតង = ត្រូវ។ ពណ៌ក្រហម = ត្រូវហាត់ទៀត
-      </div>
-      <button class="btn-khmer-audio" onclick="guideSpeak(4)">🔊 ស្តាប់ជំហានទី ៤</button>
-    </div>
-
-    <!-- Step 5 -->
-    <div class="card" id="step5">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <div style="background:linear-gradient(135deg,#F59E0B,#EF4444);color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">5</div>
-        <div style="font-size:16px;font-weight:700">Ask Claude for Help</div>
-      </div>
-
-      <!-- Illustration -->
-      <div style="background:#FFFBEB;border-radius:12px;padding:20px;text-align:center;margin-bottom:12px">
-        <div style="font-size:48px">🤖</div>
-        <div style="margin-top:10px;background:white;border-radius:10px;padding:10px;text-align:left;border:1px solid #FCD34D">
-          <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Claude says:</div>
-          <div style="font-size:12px;line-height:1.6">This means... <span style="font-family:'Noto Sans Khmer',sans-serif;color:var(--primary)">ន័យរបស់ប្រយោគនេះគឺ...</span></div>
-        </div>
-      </div>
-
-      <div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:10px">
-        On the <strong>🇰🇭 Khmer</strong> tab, tap the orange <strong>🤖 Ask Claude</strong> button. Copy the message, open Claude, paste it, and get a simple explanation in Khmer and English.
-      </div>
-      <div style="font-family:'Noto Sans Khmer',sans-serif;font-size:13px;color:var(--primary);background:var(--primary-light);padding:10px;border-radius:10px;line-height:1.7;margin-bottom:12px">
-        ចុចប៊ូតុងទឹកក្រូច 🤖 ហើយចម្លងសំណួរ បើក Claude ហើយបិទភ្ជាប់ ដើម្បីទទួលការពន្យល់ជាភាសាខ្មែរ
-      </div>
-      <button class="btn-khmer-audio" onclick="guideSpeak(5)">🔊 ស្តាប់ជំហានទី ៥</button>
-    </div>
-
-    <!-- Daily tip -->
-    <div class="card" style="background:linear-gradient(135deg,#FEF3C7,#FFF7ED);border:2px solid #FCD34D;text-align:center">
-      <div style="font-size:36px;margin-bottom:8px">⭐</div>
-      <div style="font-size:15px;font-weight:700;margin-bottom:6px">Daily Tip</div>
-      <div style="font-size:14px;color:var(--text-muted);line-height:1.6;margin-bottom:8px">Practice just 10 minutes every day. Small steps every day = big progress!</div>
-      <div style="font-family:'Noto Sans Khmer',sans-serif;font-size:13px;color:#92400E;line-height:1.7">ហាត់រៀនតែ ១០ នាទីរាល់ថ្ងៃ។ ជំហានតូចៗរាល់ថ្ងៃ = ការរីកចម្រើនធំ!</div>
-      <button class="btn-khmer-audio" style="margin-top:12px;background:linear-gradient(135deg,#F59E0B,#D97706)" onclick="guideSpeak(6)">🔊 ស្តាប់គន្លឹះ</button>
-    </div>
-
-    </div><!-- end guide-howto -->
-
-    <!-- ── KHMER ALPHABET section ── -->
-    <div id="guide-alphabet" class="guide-section hidden">
-
-      <!-- Orange hero -->
-      <div class="alpha-hero">
-        <div style="font-size:52px;margin-bottom:6px">🔤</div>
-        <h2>Khmer Alphabet</h2>
-        <div class="kh-sub">ព្យញ្ជនៈ • ស្រៈ • លេខ</div>
-        <div class="tip">🔊 Tap any letter or number to hear how it sounds</div>
-      </div>
-
-      <!-- Consonants -->
-      <div class="alpha-section-head">
-        <div class="alpha-badge">Consonants</div>
-        <div class="alpha-badge-kh">ព្យញ្ជនៈ — 33 letters</div>
-      </div>
-      <div class="letter-grid" id="alpha-consonants"></div>
-
-      <!-- Vowels -->
-      <div class="alpha-section-head">
+      <div class="divider"></div>
+      <div class="alpha-head">
         <div class="alpha-badge">Vowels</div>
-        <div class="alpha-badge-kh">ស្រៈ — 18 vowels</div>
+        <div class="alpha-badge-kh">ស្រៈ — shown attached to ក (ka)</div>
       </div>
-      <div style="font-size:12px;color:#92400E;background:#FFF7ED;border-radius:8px;padding:8px 10px;margin-bottom:10px;font-family:'Noto Sans Khmer',sans-serif;line-height:1.6">
-        ស្រៈគឺអក្សរតូចដែលភ្ជាប់ជាមួយព្យញ្ជនៈ — shown here attached to ក (ka)
+      <div style="font-size:12px;color:#92400E;background:var(--orange-light);border-radius:8px;padding:7px 10px;margin-bottom:10px;font-family:'Noto Sans Khmer',sans-serif">
+        ស្រៈជាអក្សរដែលភ្ជាប់ជាមួយព្យញ្ជនៈ — vowels attach to a consonant to form syllables
       </div>
-      <div class="letter-grid" id="alpha-vowels"></div>
+      <div class="letter-grid" id="alpha-vow"></div>
 
-      <!-- Numbers -->
-      <div class="alpha-section-head">
-        <div class="alpha-badge">Numbers</div>
-        <div class="alpha-badge-kh">លេខ ០–៩</div>
+      <div class="divider"></div>
+      <div class="alpha-head"><div class="alpha-badge">Numbers</div><div class="alpha-badge-kh">លេខ ០–៩</div></div>
+      <div class="number-grid" id="alpha-num"></div>
+
+      <div style="background:linear-gradient(135deg,#FFF7ED,#FEF3C7);border:2px solid var(--orange);border-radius:16px;padding:18px;text-align:center;margin-top:16px">
+        <div style="font-size:30px;margin-bottom:6px">💡</div>
+        <div style="font-size:14px;font-weight:700;color:#7C2D12;margin-bottom:6px">Practice Tip for Kids</div>
+        <div style="font-size:13px;color:#92400E;line-height:1.6">Point to each letter and say it out loud together with your child. Repeat 3 times, then move to the next one.</div>
+        <div style="font-family:'Noto Sans Khmer',sans-serif;font-size:13px;color:var(--orange-dark);margin-top:8px;line-height:1.7">ចង្អុលលើអក្សរ ហើយអ្នកនិងកូននិយាយជាមួយគ្នា ៣ ដង</div>
       </div>
-      <div class="number-grid" id="alpha-numbers"></div>
-
-      <!-- Tip card -->
-      <div class="alpha-tip-card">
-        <div style="font-size:34px;margin-bottom:8px">💡</div>
-        <div style="font-size:15px;font-weight:700;color:#7C2D12;margin-bottom:6px">Daily Practice Tip</div>
-        <div style="font-size:13px;color:#92400E;line-height:1.6;margin-bottom:8px">
-          Learn 3–5 letters each day. Tap the letter, listen, then look away and try to remember the sound. Repeat until it sticks!
-        </div>
-        <div style="font-family:'Noto Sans Khmer',sans-serif;font-size:13px;color:#C2410C;line-height:1.7">
-          ហាត់រៀន ៣ ទៅ ៥ អក្សរ ជារៀងរាល់ថ្ងៃ • ស្តាប់ ហើយព្យាយាមចងចាំ
-        </div>
-      </div>
-
-    </div><!-- end guide-alphabet -->
-
-  </div><!-- end s-guide -->
-
-</div><!-- end scroll area -->
-
-<!-- ASK CLAUDE MODAL -->
-<div class="modal-overlay hidden" id="claudeModal" onclick="closeClaudeModal(event)">
-  <div class="modal-box">
-    <div class="modal-title">🤖 Ask Claude</div>
-    <div class="modal-sub">Claude will explain this sentence in simple Khmer + simple English for Sim.</div>
-    <div class="prompt-box" id="claudePromptText"></div>
-    <div class="modal-steps">
-      <strong>Step 1:</strong> Tap "Copy & Open Claude" below<br>
-      <strong>Step 2:</strong> Claude.ai opens in a new tab<br>
-      <strong>Step 3:</strong> Paste the message (hold + Paste)<br>
-      <strong>Step 4:</strong> Read Claude's simple explanation
     </div>
-    <button class="btn btn-primary" onclick="copyAndOpenClaude()" style="margin-bottom:10px">📋 Copy & Open Claude</button>
-    <button class="btn btn-light" onclick="closeClaudeModal()">Cancel</button>
-  </div>
+
+    <!-- ══ ENGLISH COACH ══ -->
+    <div class="screen" id="s-read">
+      <div class="pg-title">📖 English Coach</div>
+      <div class="pg-kh">ថតរូប ឬ វាយអក្សរ ហើយស្តាប់ • For Khmer adults learning English pronunciation</div>
+
+      <div class="coach-cols">
+        <!-- Input column -->
+        <div>
+          <div class="tab-row">
+            <button class="tab-btn active" id="t-camera" onclick="switchTab('camera')">📷 Take Photo</button>
+            <button class="tab-btn" id="t-type" onclick="switchTab('type')">⌨️ Type Text</button>
+          </div>
+
+          <div id="mode-camera">
+            <label class="upload-area" for="photoIn">
+              <span class="u-icon">📷</span>
+              <div class="u-main">Click to take photo or upload image</div>
+              <div class="u-sub">ថតរូបអក្សរអង់គ្លេស ឬ ផ្ទុករូបភាព</div>
+            </label>
+            <input type="file" id="photoIn" accept="image/*" style="display:none" onchange="onPhoto(event)">
+            <img id="imgPreview" alt="preview">
+            <div id="ocrStatus"></div>
+          </div>
+
+          <div class="hidden" id="mode-type">
+            <textarea id="typeInput" placeholder="Type or paste English text here...&#10;&#10;Example: My name is Mary. I live in America. I love my family."></textarea>
+            <button class="btn btn-purple mt10" onclick="onTypeSubmit()">✨ Start Learning</button>
+          </div>
+
+          <div class="card mt10" id="speedCard" style="margin-top:12px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px">🔊 Reading Speed</div>
+            <div class="speed-row">
+              <span class="speed-lbl">🐢 Slow</span>
+              <input type="range" id="speedRange" min="0.4" max="1.2" step="0.1" value="0.65" oninput="onSpeedChange(this.value)">
+              <span class="speed-lbl">Fast 🐇</span>
+            </div>
+            <div id="speedVal">Speed: 0.65x — best for learning</div>
+          </div>
+        </div>
+
+        <!-- Output column -->
+        <div>
+          <div id="sentOut">
+            <div class="empty">
+              <div class="e-icon">📖</div>
+              <p>Take a photo or type English text to start</p>
+              <p class="e-kh">ថតរូប ឬ វាយអក្សរ ដើម្បីចាប់ផ្ដើម</p>
+            </div>
+          </div>
+          <div class="hidden mt10" id="playAllWrap">
+            <button class="btn btn-green" id="playAllBtn" onclick="playAll()">▶️ Play All Sentences</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Khmer + Practice below -->
+      <div id="coachPanels" class="hidden">
+        <div class="divider"></div>
+        <div class="tab-row" style="max-width:480px">
+          <button class="tab-btn active" id="cp-kh" onclick="switchCoachPanel('kh')">🇰🇭 Khmer Meaning</button>
+          <button class="tab-btn" id="cp-pr" onclick="switchCoachPanel('pr')">🎤 Practice Voice</button>
+        </div>
+        <div id="panelKh"><div id="khmerOut"></div></div>
+        <div id="panelPr" class="hidden"><div id="practiceOut"></div></div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS ══ -->
+    <div class="screen" id="s-settings">
+      <div class="pg-title">⚙️ Settings</div>
+      <div class="pg-kh">Configuration • កំណត់</div>
+      <div class="card" style="max-width:520px;margin-bottom:12px">
+        <div style="font-weight:700;font-size:15px">Google Translate API Key</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px;font-family:'Noto Sans Khmer',sans-serif">
+          បន្ថែម API Key ដើម្បីទទួលបានការបកប្រែប្រសើរ (optional)
+        </div>
+        <input class="api-field" type="password" id="apiKeyIn" placeholder="AIza..." oninput="saveKey()">
+        <div style="font-size:11px;color:var(--muted);margin-top:6px">No key? MyMemory translation is used — free and works well for daily learning.</div>
+      </div>
+      <div class="card" style="max-width:520px;margin-bottom:12px">
+        <div class="s-row"><div><div style="font-weight:600">Translation</div><div style="font-size:12px;color:var(--muted)" id="translLbl">Loading...</div></div><span style="font-size:22px">🌐</span></div>
+        <div class="s-row"><div><div style="font-weight:600">Text-to-Speech</div><div style="font-size:12px;color:var(--muted)">Web Speech API (free, built-in)</div></div><span style="font-size:22px">🔊</span></div>
+        <div class="s-row"><div><div style="font-weight:600">Voice Recognition</div><div style="font-size:12px;color:var(--muted)">Web Speech API (free, built-in)</div></div><span style="font-size:22px">🎤</span></div>
+        <div class="s-row"><div><div style="font-weight:600">OCR (Photo Reading)</div><div style="font-size:12px;color:var(--muted)">Tesseract.js (free, runs locally)</div></div><span style="font-size:22px">📷</span></div>
+      </div>
+      <div class="card" style="max-width:520px">
+        <div style="font-weight:700;font-size:14px;margin-bottom:8px">📱 Add to Phone Home Screen</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.8">
+          <strong>iPhone:</strong> Tap the Share button → "Add to Home Screen"<br>
+          <strong>Android:</strong> Tap ⋮ menu → "Add to Home Screen"<br>
+          <span style="font-family:'Noto Sans Khmer',sans-serif;font-size:12px">វានឹងក្លាយជាកម្មវិធីលើទូរស័ព្ទ</span>
+        </div>
+      </div>
+      <button class="btn btn-lpu mt10" onclick="goBack()" style="max-width:180px;margin-top:16px">← Back</button>
+    </div>
+
+  </main>
 </div>
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-  <button class="nav-btn active" id="n-read" onclick="goScreen('read')">
-    <span class="icon">📖</span>
-    <span class="label"><span class="label-en">Read</span><span class="label-kh">អានអក្សរ</span></span>
+<!-- ── MOBILE NAV ── -->
+<nav class="mob-nav" id="mobNav">
+  <button class="mob-btn act-or" id="mn-book" onclick="goScreen('book')">
+    <span class="m-ic">📚</span><span class="m-en">Picture Book</span><span class="m-kh">រូបភាព</span>
   </button>
-  <button class="nav-btn" id="n-khmer" onclick="goScreen('khmer')">
-    <span class="icon">🇰🇭</span>
-    <span class="label"><span class="label-en">Khmer</span><span class="label-kh">ន័យខ្មែរ</span></span>
+  <button class="mob-btn" id="mn-abc" onclick="goScreen('abc')">
+    <span class="m-ic">🔤</span><span class="m-en">Khmer ABC</span><span class="m-kh">អក្ខរក្រម</span>
   </button>
-  <button class="nav-btn" id="n-practice" onclick="goScreen('practice')">
-    <span class="icon">🎤</span>
-    <span class="label"><span class="label-en">Practice</span><span class="label-kh">ហាត់និយាយ</span></span>
-  </button>
-  <button class="nav-btn" id="n-guide" onclick="goScreen('guide')">
-    <span class="icon">📚</span>
-    <span class="label"><span class="label-en">Guide</span><span class="label-kh">របៀបប្រើ</span></span>
+  <button class="mob-btn" id="mn-read" onclick="goScreen('read')">
+    <span class="m-ic">📖</span><span class="m-en">English</span><span class="m-kh">ភាសាអង់គ្លេស</span>
   </button>
 </nav>
 
-<script>
-// ══════════════════════════════════════
-// STATE
-// ══════════════════════════════════════
-let sentences   = [];
-let xlats       = [];   // Khmer translations
-let practiceIdx = 0;
-let speechRate  = 0.65;
-let isPlaying   = false;
-let isRec       = false;
-let recObj      = null;
-let apiKey      = localStorage.getItem('gtKey') || '';
+<!-- ── CLAUDE MODAL ── -->
+<div class="modal-overlay hidden" id="claudeModal" onclick="closeClaudeModal(event)">
+  <div class="modal-box">
+    <div class="modal-title">🤖 Ask Claude for Help</div>
+    <div class="modal-sub">Claude will explain this sentence in simple Khmer + simple English.</div>
+    <div class="prompt-box" id="claudePromptText"></div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.9">
+      <strong>Step 1:</strong> Click "Copy & Open Claude"<br>
+      <strong>Step 2:</strong> Claude.ai opens — paste the message (Ctrl+V)<br>
+      <strong>Step 3:</strong> Read Claude's simple explanation
+    </div>
+    <button class="btn btn-purple mb10" onclick="copyAndOpenClaude()">📋 Copy & Open Claude</button>
+    <button class="btn btn-lpu" onclick="closeClaudeModal()">Cancel</button>
+  </div>
+</div>
 
-// Init stored key
+<script>
+// ══════════════════════════════════════════════════════
+// VOCABULARY DATA
+// ══════════════════════════════════════════════════════
+const categories = [
+  {id:'animals',   icon:'🐘', en:'Animals',   kh:'សត្វ'},
+  {id:'colors',    icon:'🌈', en:'Colors',    kh:'ពណ៌'},
+  {id:'numbers',   icon:'🔢', en:'Numbers',   kh:'លេខ'},
+  {id:'food',      icon:'🍚', en:'Food',      kh:'អាហារ'},
+  {id:'family',    icon:'👨‍👩‍👧', en:'Family',    kh:'គ្រួសារ'},
+  {id:'body',      icon:'👀', en:'Body Parts', kh:'រាងកាយ'},
+  {id:'greetings', icon:'👋', en:'Greetings', kh:'ការស្វាគមន៍'},
+];
+
+const vocab = {
+  animals:[
+    {emoji:'🐘',en:'Elephant',kh:'ដំរី'},{emoji:'🐯',en:'Tiger',kh:'ខ្លា'},
+    {emoji:'🦁',en:'Lion',kh:'សិង្ហ'},{emoji:'🐟',en:'Fish',kh:'ត្រី'},
+    {emoji:'🐓',en:'Chicken',kh:'មាន់'},{emoji:'🐄',en:'Cow',kh:'គោ'},
+    {emoji:'🐕',en:'Dog',kh:'ឆ្កែ'},{emoji:'🐈',en:'Cat',kh:'ឆ្មា'},
+    {emoji:'🐍',en:'Snake',kh:'ពស់'},{emoji:'🐸',en:'Frog',kh:'កង្កែប'},
+    {emoji:'🦋',en:'Butterfly',kh:'ប្រចៀវ'},{emoji:'🐦',en:'Bird',kh:'សត្វបក្សី'},
+    {emoji:'🐢',en:'Turtle',kh:'អណ្តើក'},{emoji:'🐊',en:'Crocodile',kh:'ក្រពើ'},
+    {emoji:'🐒',en:'Monkey',kh:'ស្វា'},
+  ],
+  colors:[
+    {emoji:'🔴',en:'Red',kh:'ក្រហម'},{emoji:'🟠',en:'Orange',kh:'ទឹកក្រូច'},
+    {emoji:'🟡',en:'Yellow',kh:'លឿង'},{emoji:'🟢',en:'Green',kh:'បៃតង'},
+    {emoji:'🔵',en:'Blue',kh:'ខៀវ'},{emoji:'🟣',en:'Purple',kh:'ស្វាយ'},
+    {emoji:'🩷',en:'Pink',kh:'ផ្កាឈូក'},{emoji:'⚫',en:'Black',kh:'ខ្មៅ'},
+    {emoji:'⚪',en:'White',kh:'ស'},{emoji:'🟤',en:'Brown',kh:'ត្នោត'},
+  ],
+  numbers:[
+    {emoji:'1️⃣',en:'One',kh:'មួយ'},{emoji:'2️⃣',en:'Two',kh:'ពីរ'},
+    {emoji:'3️⃣',en:'Three',kh:'បី'},{emoji:'4️⃣',en:'Four',kh:'បួន'},
+    {emoji:'5️⃣',en:'Five',kh:'ប្រាំ'},{emoji:'6️⃣',en:'Six',kh:'ប្រាំមួយ'},
+    {emoji:'7️⃣',en:'Seven',kh:'ប្រាំពីរ'},{emoji:'8️⃣',en:'Eight',kh:'ប្រាំបី'},
+    {emoji:'9️⃣',en:'Nine',kh:'ប្រាំបួន'},{emoji:'🔟',en:'Ten',kh:'ដប់'},
+  ],
+  food:[
+    {emoji:'🍚',en:'Rice',kh:'បាយ'},{emoji:'🍜',en:'Noodles',kh:'មី'},
+    {emoji:'🐟',en:'Fish',kh:'ត្រី'},{emoji:'🥭',en:'Mango',kh:'ស្វាយ'},
+    {emoji:'🍌',en:'Banana',kh:'ចេក'},{emoji:'🥚',en:'Egg',kh:'ពងទា'},
+    {emoji:'🍗',en:'Chicken',kh:'សាច់មាន់'},{emoji:'🥥',en:'Coconut',kh:'ដូង'},
+    {emoji:'🌽',en:'Corn',kh:'ពោត'},{emoji:'🥬',en:'Vegetable',kh:'បន្លែ'},
+    {emoji:'🍋',en:'Lemon',kh:'ក្រូចឆ្មា'},{emoji:'🍊',en:'Orange',kh:'ក្រូច'},
+    {emoji:'💧',en:'Water',kh:'ទឹក'},{emoji:'🍠',en:'Sweet Potato',kh:'ដំឡូង'},
+  ],
+  family:[
+    {emoji:'👨',en:'Father',kh:'ឪពុក'},{emoji:'👩',en:'Mother',kh:'ម្ដាយ'},
+    {emoji:'👦',en:'Boy',kh:'ក្មេងប្រុស'},{emoji:'👧',en:'Girl',kh:'ក្មេងស្រី'},
+    {emoji:'👴',en:'Grandfather',kh:'ជីតា'},{emoji:'👵',en:'Grandmother',kh:'ជីដូន'},
+    {emoji:'👶',en:'Baby',kh:'ទារក'},{emoji:'👨‍👩‍👧‍👦',en:'Family',kh:'គ្រួសារ'},
+    {emoji:'👫',en:'Friend',kh:'មិត្ត'},{emoji:'👩‍🏫',en:'Teacher',kh:'គ្រូ'},
+  ],
+  body:[
+    {emoji:'👀',en:'Eyes',kh:'ភ្នែក'},{emoji:'👃',en:'Nose',kh:'ច្រមុះ'},
+    {emoji:'👄',en:'Mouth',kh:'មាត់'},{emoji:'👂',en:'Ear',kh:'ត្រចៀក'},
+    {emoji:'✋',en:'Hand',kh:'ដៃ'},{emoji:'🦶',en:'Foot',kh:'ជើង'},
+    {emoji:'🦷',en:'Teeth',kh:'ធ្មេញ'},{emoji:'💇',en:'Hair',kh:'សក់'},
+    {emoji:'❤️',en:'Heart',kh:'បេះដូង'},{emoji:'🧠',en:'Brain',kh:'ខួរក្បាល'},
+    {emoji:'🦴',en:'Bone',kh:'ឆ្អឹង'},{emoji:'🙂',en:'Face',kh:'មុខ'},
+  ],
+  greetings:[
+    {emoji:'👋',en:'Hello',kh:'សួស្ដី'},{emoji:'🙏',en:'Thank You',kh:'អរគុណ'},
+    {emoji:'😊',en:'Please',kh:'សូម'},{emoji:'😔',en:'Sorry',kh:'សុំទោស'},
+    {emoji:'👍',en:'Yes',kh:'បាទ / ចាស'},{emoji:'❌',en:'No',kh:'ទេ'},
+    {emoji:'🌅',en:'Good Morning',kh:'អរុណសួស្ដី'},{emoji:'🌙',en:'Good Night',kh:'រាត្រីសួស្ដី'},
+    {emoji:'✌️',en:'Goodbye',kh:'លាហើយ'},{emoji:'❓',en:'What?',kh:'អ្វី?'},
+    {emoji:'📍',en:'Where?',kh:'ណា?'},{emoji:'⏰',en:'When?',kh:'ពេលណា?'},
+    {emoji:'💰',en:'How much?',kh:'ប៉ុន្មាន?'},{emoji:'🏠',en:'Home',kh:'ផ្ទះ'},
+  ],
+};
+
+// ══════════════════════════════════════════════════════
+// ALPHABET DATA
+// ══════════════════════════════════════════════════════
+const khmCons = [
+  {ch:'ក',r:'ka'},{ch:'ខ',r:'kha'},{ch:'គ',r:'ko'},{ch:'ឃ',r:'kho'},
+  {ch:'ង',r:'ngo'},{ch:'ច',r:'cha'},{ch:'ឆ',r:'chha'},{ch:'ជ',r:'jo'},
+  {ch:'ឈ',r:'chho'},{ch:'ញ',r:'nyo'},{ch:'ដ',r:'da'},{ch:'ឋ',r:'thha'},
+  {ch:'ឌ',r:'do'},{ch:'ឍ',r:'dhho'},{ch:'ណ',r:'na'},{ch:'ត',r:'ta'},
+  {ch:'ថ',r:'tha'},{ch:'ទ',r:'to'},{ch:'ធ',r:'tho'},{ch:'ន',r:'no'},
+  {ch:'ប',r:'ba'},{ch:'ផ',r:'pha'},{ch:'ព',r:'po'},{ch:'ភ',r:'pho'},
+  {ch:'ម',r:'mo'},{ch:'យ',r:'yo'},{ch:'រ',r:'ro'},{ch:'ល',r:'lo'},
+  {ch:'វ',r:'vo'},{ch:'ស',r:'sa'},{ch:'ហ',r:'ha'},{ch:'ឡ',r:'la'},{ch:'អ',r:'a'},
+];
+const khmVow = [
+  {ch:'កា',r:'aa'},{ch:'កិ',r:'e'},{ch:'កី',r:'ei'},{ch:'កឹ',r:'eu'},
+  {ch:'កឺ',r:'eu'},{ch:'កុ',r:'o'},{ch:'កូ',r:'oo'},{ch:'កួ',r:'ua'},
+  {ch:'កើ',r:'ae'},{ch:'កឿ',r:'iea'},{ch:'កៀ',r:'ie'},{ch:'កេ',r:'e'},
+  {ch:'កែ',r:'ae'},{ch:'កៃ',r:'ai'},{ch:'កោ',r:'ao'},{ch:'កៅ',r:'au'},
+  {ch:'កំ',r:'am'},{ch:'កះ',r:'ah'},
+];
+const khmNum = [
+  {ch:'០',r:'soun'},{ch:'១',r:'muoy'},{ch:'២',r:'pii'},
+  {ch:'៣',r:'bei'},{ch:'៤',r:'buan'},{ch:'៥',r:'pram'},
+  {ch:'៦',r:'pram-muoy'},{ch:'៧',r:'pram-pii'},
+  {ch:'៨',r:'pram-bei'},{ch:'៩',r:'pram-buan'},
+];
+
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+let sentences=[], xlats=[], speechRate=0.65, isPlaying=false, isRec=false, recObj=null;
+let practiceIdx=0, prevScreen='book';
+let apiKey = localStorage.getItem('gtKey') || '';
+let lastLetterCard = null;
+let abcRendered = false;
+
+// Init
 document.getElementById('apiKeyIn').value = apiKey;
 refreshTranslLabel();
+renderCategories();
+renderAlphabet();
 
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // NAVIGATION
-// ══════════════════════════════════════
-let prevScreen = 'read';
-
+// ══════════════════════════════════════════════════════
 function goScreen(name) {
   prevScreen = name;
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('s-' + name).classList.add('active');
-  const nb = document.getElementById('n-' + name);
-  if (nb) nb.classList.add('active');
-  scrollTop();
+  // Sidebar
+  document.querySelectorAll('.nav-item').forEach(b => { b.classList.remove('act-or','act-pu'); });
+  const nb = document.getElementById('nb-' + name);
+  const cls = (name==='abc') ? 'act-or' : (name==='read') ? 'act-pu' : 'act-or';
+  if (nb) nb.classList.add(cls);
+  // Mobile nav
+  document.querySelectorAll('.mob-btn').forEach(b => { b.classList.remove('act-or','act-pu'); });
+  const mb = document.getElementById('mn-' + name);
+  if (mb) mb.classList.add(cls);
+  document.getElementById('appContent').scrollTop = 0;
 }
 
 function goSettings() {
+  prevScreen = prevScreen || 'book';
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => { b.classList.remove('act-or','act-pu'); });
   document.getElementById('s-settings').classList.add('active');
-  scrollTop();
+  document.getElementById('appContent').scrollTop = 0;
 }
 
 function goBack() { goScreen(prevScreen); }
 
-function scrollTop() {
-  document.getElementById('scrollArea').scrollTop = 0;
+// ══════════════════════════════════════════════════════
+// PICTURE BOOK
+// ══════════════════════════════════════════════════════
+function renderCategories() {
+  document.getElementById('catGrid').innerHTML = categories.map(c => `
+    <div class="cat-card" onclick="showCategory('${c.id}')">
+      <span class="cat-icon">${c.icon}</span>
+      <div class="cat-en">${c.en}</div>
+      <div class="cat-kh">${c.kh}</div>
+      <div class="cat-count">${vocab[c.id].length} words</div>
+    </div>
+  `).join('');
 }
 
-// ══════════════════════════════════════
-// INPUT TABS
-// ══════════════════════════════════════
+function showCategory(id) {
+  const cat = categories.find(c => c.id === id);
+  const words = vocab[id];
+  document.getElementById('book-cats').classList.add('hidden');
+  document.getElementById('book-words').classList.remove('hidden');
+  document.getElementById('wPgTitle').textContent = cat.icon + ' ' + cat.en;
+  document.getElementById('wPgKh').textContent = cat.kh;
+  document.getElementById('wordGrid').innerHTML = words.map((w, i) => `
+    <div class="word-card" id="wc-${id}-${i}">
+      <span class="word-emoji">${w.emoji}</span>
+      <div class="word-en">${w.en}</div>
+      <div class="word-kh">${w.kh}</div>
+      <div class="word-audio-row">
+        <button class="word-btn-en" onclick="speakWord('${w.en}','en','wc-${id}-${i}')">🔊 English</button>
+        <button class="word-btn-kh" onclick="speakWord('${w.kh}','km','wc-${id}-${i}')">🔊 ខ្មែរ</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showCats() {
+  document.getElementById('book-cats').classList.remove('hidden');
+  document.getElementById('book-words').classList.add('hidden');
+  window.speechSynthesis.cancel();
+}
+
+let lastWordCard = null;
+function speakWord(text, lang, cardId) {
+  window.speechSynthesis.cancel();
+  if (lastWordCard) lastWordCard.classList.remove('playing');
+  const card = document.getElementById(cardId);
+  if (card) { card.classList.add('playing'); lastWordCard = card; }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang === 'km' ? 'km' : 'en-US';
+  u.rate = lang === 'km' ? 0.8 : 0.85;
+  u.pitch = 1;
+  u.onend = () => { if (card) card.classList.remove('playing'); };
+  window.speechSynthesis.speak(u);
+}
+
+// ══════════════════════════════════════════════════════
+// KHMER ALPHABET
+// ══════════════════════════════════════════════════════
+function renderAlphabet() {
+  fillAlpha('alpha-cons', khmCons, 'letter-grid');
+  fillAlpha('alpha-vow',  khmVow,  'letter-grid');
+  fillAlpha('alpha-num',  khmNum,  'number-grid');
+}
+
+function fillAlpha(id, data, cls) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = cls;
+  el.innerHTML = data.map((item, i) => `
+    <div class="letter-card" id="lc-${id}-${i}" onclick="speakLetter('${item.ch}','lc-${id}-${i}')">
+      <span class="l-char">${item.ch}</span>
+      <div class="l-rom">${item.r}</div>
+      <div class="l-dot">🔊</div>
+    </div>
+  `).join('');
+}
+
+function speakLetter(ch, cardId) {
+  window.speechSynthesis.cancel();
+  if (lastLetterCard) lastLetterCard.classList.remove('playing');
+  const card = document.getElementById(cardId);
+  if (card) { card.classList.add('playing'); lastLetterCard = card; }
+  const u = new SpeechSynthesisUtterance(ch);
+  u.lang = 'km'; u.rate = 0.75; u.pitch = 1;
+  u.onend = () => { if (card) card.classList.remove('playing'); };
+  window.speechSynthesis.speak(u);
+}
+
+// ══════════════════════════════════════════════════════
+// ENGLISH COACH — INPUT TABS
+// ══════════════════════════════════════════════════════
 function switchTab(mode) {
   const isCam = mode === 'camera';
   document.getElementById('mode-camera').classList.toggle('hidden', !isCam);
@@ -1105,568 +777,290 @@ function switchTab(mode) {
   document.getElementById('t-type').classList.toggle('active', !isCam);
 }
 
-// ══════════════════════════════════════
+function switchCoachPanel(p) {
+  const isKh = p === 'kh';
+  document.getElementById('panelKh').classList.toggle('hidden', !isKh);
+  document.getElementById('panelPr').classList.toggle('hidden', isKh);
+  document.getElementById('cp-kh').classList.toggle('active', isKh);
+  document.getElementById('cp-pr').classList.toggle('active', !isKh);
+  if (!isKh) renderPractice(practiceIdx);
+}
+
+// ══════════════════════════════════════════════════════
 // PHOTO / OCR
-// ══════════════════════════════════════
-// Resize image to max 1200px wide before OCR (handles large mobile photos)
+// ══════════════════════════════════════════════════════
 function resizeImage(file) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
+  return new Promise(resolve => {
+    const img = new Image(), url = URL.createObjectURL(file);
     img.onload = () => {
-      const MAX = 1200;
-      let w = img.width, h = img.height;
+      const MAX = 1200; let w = img.width, h = img.height;
       if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
-      const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h);
       URL.revokeObjectURL(url);
-      canvas.toBlob(resolve, 'image/jpeg', 0.85);
+      c.toBlob(resolve, 'image/jpeg', 0.85);
     };
     img.src = url;
   });
 }
 
 async function onPhoto(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
+  const file = e.target.files[0]; if (!file) return;
   const prev = document.getElementById('imgPreview');
-  prev.src = URL.createObjectURL(file);
-  prev.style.display = 'block';
-
-  const st = document.getElementById('ocrStatus');
-  st.style.display = 'block';
+  prev.src = URL.createObjectURL(file); prev.style.display = 'block';
+  const st = document.getElementById('ocrStatus'); st.style.display = 'block';
   st.textContent = '🔍 Preparing photo...';
-
   try {
-    // Resize first so Tesseract doesn't choke on large mobile photos
-    const resized = await resizeImage(file);
-    st.textContent = '🔍 Reading text... 0%';
-
+    const resized = await resizeImage(file); st.textContent = '🔍 Reading text... 0%';
     const res = await Tesseract.recognize(resized, 'eng', {
       workerPath: 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/worker.min.js',
-      logger: m => {
-        if (m.status === 'recognizing text')
-          st.textContent = `🔍 Reading... ${Math.round(m.progress * 100)}%`;
-      }
+      logger: m => { if (m.status==='recognizing text') st.textContent=`🔍 Reading... ${Math.round(m.progress*100)}%`; }
     });
     const text = res.data.text.trim();
-    if (text.length < 3) {
-      st.textContent = '⚠️ Could not read text. Try a clearer photo, or use the Type Text tab.';
-      return;
-    }
+    if (text.length < 3) { st.textContent = '⚠️ Could not read text. Try the Type Text tab instead.'; return; }
     st.textContent = '✅ Text found! Loading...';
-    await load(text);
-    st.style.display = 'none';
-  } catch (err) {
-    console.error('OCR error:', err);
-    st.innerHTML = '❌ Photo reading failed. <strong>Try the "Type Text" tab instead</strong> — type or paste the English text directly.';
+    await load(text); st.style.display = 'none';
+  } catch(err) {
+    st.innerHTML = '❌ Photo reading failed. <strong>Try the "Type Text" tab instead.</strong>';
   }
 }
 
-// ══════════════════════════════════════
-// TYPE INPUT
-// ══════════════════════════════════════
 async function onTypeSubmit() {
   const text = document.getElementById('typeInput').value.trim();
   if (!text) return;
   await load(text);
 }
 
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // LOAD & PROCESS
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════════════
 async function load(text) {
-  // Split into sentences
-  const clean = text.replace(/\n+/g, ' ').replace(/\s+/g, ' ').trim();
+  const clean = text.replace(/\n+/g,' ').replace(/\s+/g,' ').trim();
   const parts = clean.match(/[^.!?]+[.!?]+/g) || [clean];
-  sentences = parts.map(s => s.trim()).filter(s => s.length > 2);
-
+  sentences = parts.map(s=>s.trim()).filter(s=>s.length>2);
   if (!sentences.length) return;
   xlats = new Array(sentences.length).fill('...');
-
-  renderRead();
+  renderRead(); renderKhmer();
   document.getElementById('playAllWrap').classList.remove('hidden');
-
-  // Show loading placeholders in other tabs
-  renderKhmer();
-  renderPractice(0);
-
-  // Fetch translations (parallel)
-  await Promise.all(sentences.map((s, i) =>
+  document.getElementById('coachPanels').classList.remove('hidden');
+  await Promise.all(sentences.map((s,i) =>
     translate(s).then(t => {
       xlats[i] = t;
-      // Update khmer tab live
-      const el = document.getElementById('kh-' + i);
-      if (el) el.textContent = t;
-      // Update practice tab if visible
-      const pk = document.getElementById('pk-' + i);
-      if (pk) pk.textContent = t;
+      const el = document.getElementById('kh-'+i); if (el) el.textContent = t;
+      const pk = document.getElementById('pk-'+i); if (pk) pk.textContent = t;
     })
   ));
 }
 
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // TRANSLATION
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════════════
 async function translate(text) {
   try {
     if (apiKey) {
-      const r = await fetch(
-        `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`,
-        { method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({q: text, source:'en', target:'km', format:'text'}) }
-      );
+      const r = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${apiKey}`,
+        {method:'POST',headers:{'Content-Type':'application/json'},
+         body:JSON.stringify({q:text,source:'en',target:'km',format:'text'})});
       const d = await r.json();
       if (d.data?.translations?.[0]?.translatedText) return d.data.translations[0].translatedText;
     }
-    // Fallback: MyMemory
     const r = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|km`);
     const d = await r.json();
     return d.responseData?.translatedText || '—';
   } catch { return '—'; }
 }
 
-function saveKey() {
-  apiKey = document.getElementById('apiKeyIn').value.trim();
-  localStorage.setItem('gtKey', apiKey);
-  refreshTranslLabel();
-}
+function saveKey() { apiKey=document.getElementById('apiKeyIn').value.trim(); localStorage.setItem('gtKey',apiKey); refreshTranslLabel(); }
+function refreshTranslLabel() { const el=document.getElementById('translLbl'); if(el) el.textContent=apiKey?'Google Translate ✓':'MyMemory (free)'; }
 
-function refreshTranslLabel() {
-  const el = document.getElementById('translLbl');
-  if (el) el.textContent = apiKey ? 'Google Translate ✓' : 'MyMemory (free)';
-}
-
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // RENDER — READ SCREEN
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════════════
 function renderRead() {
-  document.getElementById('sentOut').innerHTML = sentences.map((s, i) => `
+  document.getElementById('sentOut').innerHTML = sentences.map((s,i) => `
     <div class="sent-card" id="sc-${i}">
-      <div class="sent-tag">Sentence ${i + 1}</div>
-      <div class="sent-english">${s}</div>
-      <div class="sent-divider"></div>
+      <div class="sent-tag">Sentence ${i+1}</div>
+      <div class="sent-en">${s}</div>
+      <div class="divider" style="margin:8px 0"></div>
       <div class="btn-row">
-        <button class="btn btn-light btn-sm" onclick="speakIdx(${i})">🔊 Listen</button>
-        <button class="btn btn-outline btn-sm" onclick="goScreen('practice');renderPractice(${i})">🎤 Practice</button>
+        <button class="btn btn-lpu btn-sm" onclick="speakIdx(${i})">🔊 Listen</button>
+        <button class="btn btn-lor btn-sm" onclick="switchCoachPanel('pr');renderPractice(${i})">🎤 Practice</button>
       </div>
     </div>
   `).join('');
 }
 
-// ══════════════════════════════════════
-// RENDER — KHMER HELPER
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// RENDER — KHMER
+// ══════════════════════════════════════════════════════
 function renderKhmer() {
-  document.getElementById('khmerOut').innerHTML = sentences.map((s, i) => `
+  document.getElementById('khmerOut').innerHTML = sentences.map((s,i) => `
     <div class="sent-card">
-      <div class="sent-tag">Sentence ${i + 1}</div>
-      <div class="sent-english" style="margin-bottom:8px">${s}</div>
-
-      <!-- Big Khmer audio button — primary feature since Sim can't read Khmer yet -->
-      <button class="btn-khmer-audio" onclick="speakKhmer(${i})">
-        🔊 ស្តាប់ន័យខ្មែរ — Hear in Khmer
-      </button>
-
-      <!-- Khmer text (shown for future reference) -->
-      <div class="sent-khmer" id="kh-${i}" style="background:#F5F3FF;border-radius:10px;padding:10px;font-size:13px">${xlats[i] || '...'}</div>
-
-      <div class="sent-divider"></div>
-      <button class="btn btn-light btn-sm" onclick="speakIdx(${i})" style="width:100%;margin-bottom:6px">🔊 Hear English</button>
-
-      <!-- Ask Claude -->
-      <button class="btn-ask-claude" onclick="openClaudeModal(${i})">
-        🤖 Ask Claude to explain this
-      </button>
+      <div class="sent-tag">Sentence ${i+1}</div>
+      <div class="sent-en" style="margin-bottom:6px">${s}</div>
+      <button class="btn-kh-audio" onclick="speakKhmer(${i})">🔊 ស្តាប់ន័យខ្មែរ — Hear in Khmer</button>
+      <div class="sent-kh" id="kh-${i}">${xlats[i]||'...'}</div>
+      <div class="divider" style="margin:10px 0"></div>
+      <button class="btn btn-lpu btn-sm" style="width:100%;margin-bottom:6px" onclick="speakIdx(${i})">🔊 Hear English</button>
+      <button class="btn-ask-claude" onclick="openClaudeModal(${i})">🤖 Ask Claude to explain this</button>
     </div>
   `).join('');
 }
 
-// ══════════════════════════════════════
-// RENDER — PRACTICE SCREEN
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// RENDER — PRACTICE
+// ══════════════════════════════════════════════════════
 function renderPractice(idx) {
   practiceIdx = idx || 0;
   if (!sentences.length) return;
-  const s   = sentences[practiceIdx];
-  const kh  = xlats[practiceIdx] || '...';
-  const pct = Math.round(((practiceIdx + 1) / sentences.length) * 100);
-
+  const s = sentences[practiceIdx], kh = xlats[practiceIdx]||'...';
+  const pct = Math.round(((practiceIdx+1)/sentences.length)*100);
   document.getElementById('practiceOut').innerHTML = `
-    <div class="card">
+    <div class="practice-card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <div class="sent-tag">Sentence ${practiceIdx + 1} / ${sentences.length}</div>
-        <div style="font-size:11px;color:var(--text-muted)">${pct}% done</div>
+        <div class="sent-tag">Sentence ${practiceIdx+1} / ${sentences.length}</div>
+        <div style="font-size:11px;color:var(--muted)">${pct}% done</div>
       </div>
-
       <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
-
-      <div style="font-size:18px;font-weight:600;line-height:1.55;text-align:center;margin:16px 0 6px">${s}</div>
-      <div style="font-family:'Noto Sans Khmer',sans-serif;font-size:13px;color:var(--primary);text-align:center;margin-bottom:16px" id="pk-${practiceIdx}">${kh}</div>
-
-      <button class="btn btn-light mb12" onclick="speakIdx(${practiceIdx})">🔊 Listen first</button>
-
+      <div style="font-size:19px;font-weight:700;text-align:center;margin:16px 0 6px;line-height:1.5">${s}</div>
+      <div style="font-family:'Noto Sans Khmer',sans-serif;font-size:14px;color:var(--purple);text-align:center;margin-bottom:16px" id="pk-${practiceIdx}">${kh}</div>
+      <button class="btn btn-lpu mb10" onclick="speakIdx(${practiceIdx})">🔊 Listen first</button>
       <div class="record-wrap">
         <div class="rec-hint">ចុចប៊ូតុងក្រហម ហើយនិយាយ</div>
         <button class="record-btn" id="recBtn" onclick="toggleRec(${practiceIdx})">🎤</button>
-        <div id="recStatus" style="font-size:12px;color:var(--text-muted);margin-top:8px">Tap to speak</div>
+        <div id="recStatus" style="font-size:12px;color:var(--muted);margin-top:8px">Tap to speak</div>
       </div>
-
       <div id="fbArea"></div>
     </div>
-
-    <div class="btn-row" style="margin-top:4px">
-      <button class="btn btn-outline" onclick="renderPractice(${practiceIdx - 1})" ${practiceIdx === 0 ? 'disabled' : ''}>← Prev</button>
-      <button class="btn btn-primary" onclick="renderPractice(${practiceIdx + 1})" ${practiceIdx === sentences.length - 1 ? 'disabled' : ''}>Next →</button>
+    <div class="btn-row mt10">
+      <button class="btn btn-lpu" onclick="renderPractice(${practiceIdx-1})" ${practiceIdx===0?'disabled':''}>← Prev</button>
+      <button class="btn btn-purple" onclick="renderPractice(${practiceIdx+1})" ${practiceIdx===sentences.length-1?'disabled':''}>Next →</button>
     </div>
   `;
 }
 
-// ══════════════════════════════════════
-// SPEED
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// SPEECH
+// ══════════════════════════════════════════════════════
 function onSpeedChange(v) {
-  speechRate = parseFloat(v);
-  const hint = speechRate <= 0.55 ? '— very slow' : speechRate <= 0.75 ? '— best for learning' : speechRate >= 1.1 ? '— native speed' : '';
-  document.getElementById('speedVal').textContent = `Speed: ${speechRate}x ${hint}`;
+  speechRate=parseFloat(v);
+  const h=speechRate<=0.55?'— very slow':speechRate<=0.75?'— best for learning':speechRate>=1.1?'— native speed':'';
+  document.getElementById('speedVal').textContent=`Speed: ${speechRate}x ${h}`;
 }
 
-// ══════════════════════════════════════
-// SPEECH — TTS
-// ══════════════════════════════════════
 function speakIdx(i, cb) {
   speak(sentences[i], 'en-US', cb);
-  document.querySelectorAll('.sent-card').forEach(c => c.classList.remove('playing'));
-  const c = document.getElementById('sc-' + i);
-  if (c) { c.classList.add('playing'); c.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
+  document.querySelectorAll('.sent-card').forEach(c=>c.classList.remove('playing'));
+  const c=document.getElementById('sc-'+i);
+  if(c){c.classList.add('playing');c.scrollIntoView({behavior:'smooth',block:'nearest'});}
 }
 
 function speakKhmer(i) {
-  const t = xlats[i];
-  if (t && t !== '...') speak(t, 'km');
+  const t=xlats[i]; if(t&&t!=='...') speak(t,'km');
 }
 
 function speak(text, lang, cb) {
   window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang;
-  u.rate = speechRate;
-  u.pitch = 1;
-  if (cb) u.onend = cb;
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=lang; u.rate=speechRate; u.pitch=1;
+  if(cb) u.onend=cb;
   window.speechSynthesis.speak(u);
 }
 
-// Play all
 function playAll() {
-  if (isPlaying) {
-    window.speechSynthesis.cancel();
-    isPlaying = false;
-    document.getElementById('playAllBtn').textContent = '▶️ Play All Sentences';
-    return;
-  }
-  isPlaying = true;
-  document.getElementById('playAllBtn').textContent = '⏹ Stop Playing';
+  if(isPlaying){window.speechSynthesis.cancel();isPlaying=false;document.getElementById('playAllBtn').textContent='▶️ Play All Sentences';return;}
+  isPlaying=true; document.getElementById('playAllBtn').textContent='⏹ Stop Playing';
   playSeq(0);
 }
 
 function playSeq(i) {
-  if (i >= sentences.length || !isPlaying) {
-    isPlaying = false;
-    const b = document.getElementById('playAllBtn');
-    if (b) b.textContent = '▶️ Play All Sentences';
-    return;
-  }
-  speakIdx(i, () => setTimeout(() => playSeq(i + 1), 600));
+  if(i>=sentences.length||!isPlaying){isPlaying=false;const b=document.getElementById('playAllBtn');if(b)b.textContent='▶️ Play All Sentences';return;}
+  speakIdx(i,()=>setTimeout(()=>playSeq(i+1),600));
 }
 
-// ══════════════════════════════════════
-// SPEECH — RECOGNITION
-// ══════════════════════════════════════
-function toggleRec(sentIdx) {
-  isRec ? stopRec() : startRec(sentIdx);
-}
+// ══════════════════════════════════════════════════════
+// VOICE RECOGNITION
+// ══════════════════════════════════════════════════════
+function toggleRec(sentIdx){isRec?stopRec():startRec(sentIdx);}
 
 function startRec(sentIdx) {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    document.getElementById('fbArea').innerHTML = `
-      <div class="feedback-box"><div class="fb-badge fb-ok">⚠️ Use Chrome browser for voice features</div></div>`;
-    return;
-  }
-  recObj = new SR();
-  recObj.lang = 'en-US';
-  recObj.interimResults = false;
-
-  const btn = document.getElementById('recBtn');
-  const st  = document.getElementById('recStatus');
-  btn.classList.add('rec');
-  btn.textContent = '⏹';
-  st.textContent = 'Listening... speak now 🎙';
-  isRec = true;
-
-  recObj.onresult = e => {
-    const spoken = e.results[0][0].transcript;
-    score(sentences[sentIdx], spoken);
-  };
-  recObj.onerror = () => {
-    stopRec();
-    document.getElementById('fbArea').innerHTML =
-      `<div class="feedback-box"><div class="fb-badge fb-ok">⚠️ Could not hear. Try again.</div></div>`;
-  };
-  recObj.onend = () => stopRec();
-  recObj.start();
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){document.getElementById('fbArea').innerHTML=`<div class="fb-box"><div class="fb-badge fb-ok">⚠️ Use Chrome for voice features</div></div>`;return;}
+  recObj=new SR(); recObj.lang='en-US'; recObj.interimResults=false;
+  const btn=document.getElementById('recBtn'),st=document.getElementById('recStatus');
+  btn.classList.add('rec'); btn.textContent='⏹'; st.textContent='Listening... speak now 🎙'; isRec=true;
+  recObj.onresult=e=>{const spoken=e.results[0][0].transcript;score(sentences[sentIdx],spoken);};
+  recObj.onerror=()=>{stopRec();document.getElementById('fbArea').innerHTML=`<div class="fb-box"><div class="fb-badge fb-ok">⚠️ Could not hear. Try again.</div></div>`;};
+  recObj.onend=()=>stopRec(); recObj.start();
 }
 
 function stopRec() {
-  isRec = false;
-  const btn = document.getElementById('recBtn');
-  const st  = document.getElementById('recStatus');
-  if (btn) { btn.classList.remove('rec'); btn.textContent = '🎤'; }
-  if (st)  st.textContent = 'Tap to speak';
-  if (recObj) recObj.stop();
+  isRec=false;
+  const btn=document.getElementById('recBtn'),st=document.getElementById('recStatus');
+  if(btn){btn.classList.remove('rec');btn.textContent='🎤';}
+  if(st)st.textContent='Tap to speak';
+  if(recObj)recObj.stop();
 }
 
-// ══════════════════════════════════════
-// SCORING
-// ══════════════════════════════════════
 function score(expected, spoken) {
-  const norm = s => s.toLowerCase().replace(/[^a-z\s]/g,'').trim();
-  const expW = norm(expected).split(/\s+/);
-  const spkW = norm(spoken).split(/\s+/);
-
-  let correct = 0;
-  const res = expW.map(w => {
-    const hit = spkW.some(sw => sw === w || lev(sw, w) <= 1);
-    if (hit) correct++;
-    return { w, hit };
-  });
-
-  const pct = Math.round((correct / expW.length) * 100);
-  const highlighted = res.map(r =>
-    `<span class="${r.hit ? 'w-correct' : 'w-wrong'}">${r.w}</span>`
-  ).join(' ');
-
-  const hard = res.filter(r => !r.hit).map(r => r.w);
-
-  let cls, msg;
-  if (pct >= 90)      { cls = 'fb-good'; msg = '🌟 ល្អណាស់! Excellent!'; }
-  else if (pct >= 65) { cls = 'fb-ok';   msg = '👍 ព្យាយាមម្តងទៀត! Try again!'; }
-  else                { cls = 'fb-low';  msg = '📚 ត្រូវហាត់! Keep practicing!'; }
-
-  document.getElementById('fbArea').innerHTML = `
-    <div class="feedback-box">
+  const norm=s=>s.toLowerCase().replace(/[^a-z\s]/g,'').trim();
+  const expW=norm(expected).split(/\s+/), spkW=norm(spoken).split(/\s+/);
+  let correct=0;
+  const res=expW.map(w=>{const hit=spkW.some(sw=>sw===w||lev(sw,w)<=1);if(hit)correct++;return{w,hit};});
+  const pct=Math.round((correct/expW.length)*100);
+  const highlighted=res.map(r=>`<span class="${r.hit?'w-ok':'w-bad'}">${r.w}</span>`).join(' ');
+  const hard=res.filter(r=>!r.hit).map(r=>r.w);
+  let cls,msg;
+  if(pct>=90){cls='fb-good';msg='🌟 ល្អណាស់! Excellent!';}
+  else if(pct>=65){cls='fb-ok';msg='👍 ព្យាយាមម្តងទៀត! Keep going!';}
+  else{cls='fb-low';msg='📚 ត្រូវហាត់! Keep practicing!';}
+  document.getElementById('fbArea').innerHTML=`
+    <div class="fb-box">
       <div class="fb-badge ${cls}">${msg}</div>
-
       <div style="margin:10px 0">
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Score: ${pct}%</div>
-        <div class="prog-bar">
-          <div class="prog-fill" style="width:${pct}%;background:${pct>=90?'var(--success)':pct>=65?'var(--warning)':'var(--error)'}"></div>
-        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Score: ${pct}%</div>
+        <div class="prog-bar"><div class="prog-fill" style="width:${pct}%;background:${pct>=90?'var(--green)':pct>=65?'#F59E0B':'var(--red)'}"></div></div>
       </div>
-
       <div class="fb-words">${highlighted}</div>
-      <div class="fb-meta">✅ Green = correct &nbsp;&nbsp; ❌ Red underline = needs work</div>
-      <div class="fb-meta" style="margin-top:4px">You said: <em>"${spoken}"</em></div>
-
-      ${hard.length ? `
-        <div class="phonetic-box">
-          <h5>🔤 Tap to hear these words again:</h5>
-          <div class="chips">
-            ${hard.map(w => `<div class="chip" onclick="speak('${w}','en-US')">${w} 🔊</div>`).join('')}
-          </div>
-        </div>
-      ` : ''}
-    </div>
-  `;
+      <div style="font-size:11px;color:var(--muted)">✅ Green = correct &nbsp; ❌ Red underline = practice more</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">You said: <em>"${spoken}"</em></div>
+      ${hard.length?`<div class="chips">${hard.map(w=>`<div class="chip" onclick="speak('${w}','en-US')">${w} 🔊</div>`).join('')}</div>`:''}
+    </div>`;
 }
 
-// Levenshtein distance (fuzzy match)
-function lev(a, b) {
-  const m = a.length, n = b.length;
-  const d = [...Array(m+1)].map((_,i) => [...Array(n+1)].map((_,j) => i===0?j:j===0?i:0));
-  for (let i=1;i<=m;i++) for(let j=1;j<=n;j++)
-    d[i][j] = a[i-1]===b[j-1] ? d[i-1][j-1] : 1+Math.min(d[i-1][j],d[i][j-1],d[i-1][j-1]);
+function lev(a,b) {
+  const m=a.length,n=b.length;
+  const d=[...Array(m+1)].map((_,i)=>[...Array(n+1)].map((_,j)=>i===0?j:j===0?i:0));
+  for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)
+    d[i][j]=a[i-1]===b[j-1]?d[i-1][j-1]:1+Math.min(d[i-1][j],d[i][j-1],d[i-1][j-1]);
   return d[m][n];
 }
 
-// ══════════════════════════════════════
-// ASK CLAUDE (free — opens claude.ai)
-// ══════════════════════════════════════
-let claudePrompt = '';
-
-function openClaudeModal(sentIdx) {
-  const s = sentences[sentIdx];
-  claudePrompt = `My name is Sim. I am learning English. I speak Khmer but I cannot read or write Khmer well. Please explain this English sentence to me using very simple spoken Khmer words AND very simple English. Keep it short and easy to understand. The sentence is: "${s}"`;
-  document.getElementById('claudePromptText').textContent = claudePrompt;
+// ══════════════════════════════════════════════════════
+// ASK CLAUDE
+// ══════════════════════════════════════════════════════
+let claudePrompt='';
+function openClaudeModal(i) {
+  claudePrompt=`My name is Sim. I am learning English. I speak Khmer but cannot read or write Khmer well. Please explain this English sentence using very simple spoken Khmer words AND very simple English. Keep it short and easy to understand. The sentence is: "${sentences[i]}"`;
+  document.getElementById('claudePromptText').textContent=claudePrompt;
   document.getElementById('claudeModal').classList.remove('hidden');
 }
-
 function closeClaudeModal(e) {
-  if (!e || e.target === document.getElementById('claudeModal')) {
+  if(!e||e.target===document.getElementById('claudeModal'))
     document.getElementById('claudeModal').classList.add('hidden');
-  }
 }
-
 async function copyAndOpenClaude() {
-  try {
-    await navigator.clipboard.writeText(claudePrompt);
-  } catch {
-    // Fallback for browsers that block clipboard
-    const ta = document.createElement('textarea');
-    ta.value = claudePrompt;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-  }
-  window.open('https://claude.ai', '_blank');
+  try{await navigator.clipboard.writeText(claudePrompt);}
+  catch{const ta=document.createElement('textarea');ta.value=claudePrompt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}
+  window.open('https://claude.ai','_blank');
   document.getElementById('claudeModal').classList.add('hidden');
 }
 
-// ══════════════════════════════════════
-// HOW TO USE — KHMER VOICE GUIDE
-// ══════════════════════════════════════
-const guideTexts = {
-  1: 'ជំហានទី មួយ។ ទៅផ្ទាំង អានអក្សរ។ ថតរូបអក្សរអង់គ្លេស ដូចជា សំបុត្រ ប័ណ្ណ ឬ សៀវភៅ។ ឬ វាយអក្សរដោយផ្ទាល់ក្នុងប្រអប់អក្សរ។',
-  2: 'ជំហានទី ពីរ។ ចុចប៊ូតុង ស្តាប់ ដើម្បីឮការអានប្រយោគអង់គ្លេស។ ការអានយឺតៗ ដើម្បីឲ្យអ្នកស្តាប់ច្បាស់។ អ្នកអាចបន្ថយល្បឿនបន្ថែមទៀត ដោយប្រើគ្រាប់រំកិល។',
-  3: 'ជំហានទី បី។ ទៅផ្ទាំង ន័យខ្មែរ។ ចុចប៊ូតុងព័រ្ណម៉ាស់ធំ ដើម្បីស្តាប់ន័យខ្មែររបស់ប្រយោគអង់គ្លេស។ ស្តាប់ ហើយយល់ន័យ មុនពេលហាត់និយាយ។',
-  4: 'ជំហានទី បួន។ ទៅផ្ទាំង ហាត់និយាយ។ ចុចប៊ូតុងក្រហម ហើយនិយាយប្រយោគ។ ពណ៌បៃតង មានន័យថា ត្រូវ។ ពណ៌ក្រហម មានន័យថា ត្រូវហាត់ទៀត។ ចុចលើពាក្យក្រហម ដើម្បីស្តាប់ការអានរបស់វា។',
-  5: 'ជំហានទី ប្រាំ។ ប្រសិនបើអ្នកមិនយល់ប្រយោគ ចុចប៊ូតុងទឹកក្រូច ដើម្បីសួរ Claude។ ចម្លងសំណួរ ហើយបើក Claude ដើម្បីទទួលការពន្យល់ ជាភាសាខ្មែរ និង ភាសាអង់គ្លេសសាមញ្ញ។',
-  6: 'គន្លឹះប្រចាំថ្ងៃ។ ហាត់រៀនតែ ដប់ នាទីរាល់ថ្ងៃ។ ជំហានតូចៗ ជារៀងរាល់ថ្ងៃ នឹងនាំទៅដល់ ការរីកចម្រើនធំ។ អ្នកអាចធ្វើបាន!'
-};
-
-function guideSpeak(step) {
-  const text = guideTexts[step];
-  if (!text) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'km';
-  u.rate = 0.85;
-  u.pitch = 1;
-  window.speechSynthesis.speak(u);
-
-  // Highlight active step card
-  document.querySelectorAll('[id^="step"]').forEach(c => {
-    c.style.borderColor = '';
-    c.style.boxShadow = '';
-  });
-  const card = document.getElementById('step' + step);
-  if (card) {
-    card.style.borderColor = 'var(--primary)';
-    card.style.boxShadow = '0 0 0 3px var(--primary-light)';
-    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-}
-
-// ══════════════════════════════════════
-// GUIDE SUB-TABS
-// ══════════════════════════════════════
-let alphabetRendered = false;
-
-function switchGuideTab(tab) {
-  const howto = document.getElementById('guide-howto');
-  const alpha  = document.getElementById('guide-alphabet');
-  const btnH   = document.getElementById('gt-howto');
-  const btnA   = document.getElementById('gt-alphabet');
-
-  if (tab === 'howto') {
-    howto.classList.remove('hidden');
-    alpha.classList.add('hidden');
-    btnH.classList.add('active-purple');
-    btnH.classList.remove('active-orange');
-    btnA.classList.remove('active-orange');
-    btnA.classList.remove('active-purple');
-    scrollTop();
-  } else {
-    howto.classList.add('hidden');
-    alpha.classList.remove('hidden');
-    btnA.classList.add('active-orange');
-    btnA.classList.remove('active-purple');
-    btnH.classList.remove('active-purple');
-    btnH.classList.remove('active-orange');
-    if (!alphabetRendered) { renderAlphabet(); alphabetRendered = true; }
-    scrollTop();
-  }
-}
-
-// ══════════════════════════════════════
-// KHMER ALPHABET DATA + RENDER
-// ══════════════════════════════════════
-const khmConsonants = [
-  {ch:'ក',rom:'ka'},{ch:'ខ',rom:'kha'},{ch:'គ',rom:'ko'},{ch:'ឃ',rom:'kho'},
-  {ch:'ង',rom:'ngo'},{ch:'ច',rom:'cha'},{ch:'ឆ',rom:'chhha'},{ch:'ជ',rom:'jo'},
-  {ch:'ឈ',rom:'chho'},{ch:'ញ',rom:'nyo'},{ch:'ដ',rom:'da'},{ch:'ឋ',rom:'thha'},
-  {ch:'ឌ',rom:'do'},{ch:'ឍ',rom:'dhho'},{ch:'ណ',rom:'na'},{ch:'ត',rom:'ta'},
-  {ch:'ថ',rom:'tha'},{ch:'ទ',rom:'to'},{ch:'ធ',rom:'tho'},{ch:'ន',rom:'no'},
-  {ch:'ប',rom:'ba'},{ch:'ផ',rom:'pha'},{ch:'ព',rom:'po'},{ch:'ភ',rom:'pho'},
-  {ch:'ម',rom:'mo'},{ch:'យ',rom:'yo'},{ch:'រ',rom:'ro'},{ch:'ល',rom:'lo'},
-  {ch:'វ',rom:'vo'},{ch:'ស',rom:'sa'},{ch:'ហ',rom:'ha'},{ch:'ឡ',rom:'la'},{ch:'អ',rom:'a'}
-];
-
-// Vowels shown attached to ក (ka) so they're clearly visible
-const khmVowels = [
-  {ch:'កា',rom:'aa'},{ch:'កិ',rom:'e'},{ch:'កី',rom:'ei'},{ch:'កឹ',rom:'eu'},
-  {ch:'កឺ',rom:'eu'},{ch:'កុ',rom:'o'},{ch:'កូ',rom:'oo'},{ch:'កួ',rom:'ua'},
-  {ch:'កើ',rom:'ae'},{ch:'កឿ',rom:'iea'},{ch:'កៀ',rom:'ie'},{ch:'កេ',rom:'e'},
-  {ch:'កែ',rom:'ae'},{ch:'កៃ',rom:'ai'},{ch:'កោ',rom:'ao'},{ch:'កៅ',rom:'au'},
-  {ch:'កំ',rom:'am'},{ch:'កះ',rom:'ah'}
-];
-
-const khmNumbers = [
-  {ch:'០',rom:'soun • 0'},{ch:'១',rom:'muoy • 1'},{ch:'២',rom:'pii • 2'},
-  {ch:'៣',rom:'bei • 3'},{ch:'៤',rom:'buan • 4'},{ch:'៥',rom:'pram • 5'},
-  {ch:'៦',rom:'pram-muoy • 6'},{ch:'៧',rom:'pram-pii • 7'},
-  {ch:'៨',rom:'pram-bei • 8'},{ch:'៩',rom:'pram-buan • 9'}
-];
-
-function renderAlphabet() {
-  fillLetterGrid('alpha-consonants', khmConsonants, 'letter-grid');
-  fillLetterGrid('alpha-vowels',     khmVowels,     'letter-grid');
-  fillLetterGrid('alpha-numbers',    khmNumbers,    'number-grid');
-}
-
-function fillLetterGrid(id, data, gridClass) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  // re-apply grid class in case element was found
-  el.className = gridClass;
-  el.innerHTML = data.map(({ch, rom}, i) => `
-    <div class="letter-card" id="lc-${id}-${i}" onclick="speakLetter('${ch}','lc-${id}-${i}')">
-      <span class="letter-char">${ch}</span>
-      <div class="letter-rom">${rom}</div>
-      <div class="letter-audio-dot">🔊</div>
-    </div>
-  `).join('');
-}
-
-let lastLetterCard = null;
-function speakLetter(ch, cardId) {
-  window.speechSynthesis.cancel();
-  // Highlight the tapped card
-  if (lastLetterCard) lastLetterCard.classList.remove('playing');
-  const card = document.getElementById(cardId);
-  if (card) { card.classList.add('playing'); lastLetterCard = card; }
-
-  const u = new SpeechSynthesisUtterance(ch);
-  u.lang = 'km';
-  u.rate = 0.75;
-  u.pitch = 1;
-  u.onend = () => { if (card) card.classList.remove('playing'); };
-  window.speechSynthesis.speak(u);
-}
-
-// ══════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // iOS TTS BUG FIX
-// Safari pauses speech after ~15s — this keeps it alive
-// ══════════════════════════════════════
-if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-  setInterval(() => {
-    if (window.speechSynthesis.speaking && window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
-    }
-  }, 5000);
+// ══════════════════════════════════════════════════════
+if(/iPhone|iPad|iPod/i.test(navigator.userAgent)){
+  setInterval(()=>{if(window.speechSynthesis.speaking&&window.speechSynthesis.paused)window.speechSynthesis.resume();},5000);
 }
 </script>
 </body>
