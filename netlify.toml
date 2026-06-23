@@ -1,18 +1,16 @@
 # Netlify configuration for SiMplyKhmenglish
-# This file tells Netlify how to build and deploy the site.
-# No build step needed — this is a pure HTML/JS app.
 
 [build]
   publish = "."
 
-# Redirect /app shortcut to the coach
+# After signup form — redirect to the app
+[[redirects]]
+  from = "/english-coach"
+  to   = "/english-coach.html"
+  status = 200
+
+# /app shortcut also goes to the coach
 [[redirects]]
   from = "/app"
   to   = "/english-coach.html"
   status = 200
-
-# Catch-all: unknown paths go to the landing page
-[[redirects]]
-  from = "/404"
-  to   = "/index.html"
-  status = 302
