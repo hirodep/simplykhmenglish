@@ -719,18 +719,48 @@ function showCats() {
   window.speechSynthesis.cancel();
 }
 
+// ── KHMER TTS via Google (Web Speech API has no Khmer voice on most devices) ──
+function speakKh(text, onEnd) {
+  // Try native Khmer voice first
+  const voices = window.speechSynthesis.getVoices();
+  const khVoice = voices.find(v => v.lang.startsWith('km'));
+  if (khVoice) {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.voice = khVoice; u.lang = 'km'; u.rate = 0.8;
+    if (onEnd) u.onend = onEnd;
+    window.speechSynthesis.speak(u);
+    return;
+  }
+  // Fallback: Google TTS audio (works without API key)
+  const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=km&client=tw-ob`;
+  const audio = new Audio(url);
+  if (onEnd) audio.onended = onEnd;
+  audio.onerror = () => {
+    // Last resort: try Web Speech anyway
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'km'; u.rate = 0.8;
+    if (onEnd) u.onend = onEnd;
+    window.speechSynthesis.speak(u);
+  };
+  audio.play().catch(() => audio.onerror());
+}
+
 let lastWordCard = null;
 function speakWord(text, lang, cardId) {
   window.speechSynthesis.cancel();
   if (lastWordCard) lastWordCard.classList.remove('playing');
   const card = document.getElementById(cardId);
   if (card) { card.classList.add('playing'); lastWordCard = card; }
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang === 'km' ? 'km' : 'en-US';
-  u.rate = lang === 'km' ? 0.8 : 0.85;
-  u.pitch = 1;
-  u.onend = () => { if (card) card.classList.remove('playing'); };
-  window.speechSynthesis.speak(u);
+  const onEnd = () => { if (card) card.classList.remove('playing'); };
+  if (lang === 'km') {
+    speakKh(text, onEnd);
+  } else {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'en-US'; u.rate = 0.85; u.pitch = 1;
+    u.onend = onEnd;
+    window.speechSynthesis.speak(u);
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -760,10 +790,7 @@ function speakLetter(ch, cardId) {
   if (lastLetterCard) lastLetterCard.classList.remove('playing');
   const card = document.getElementById(cardId);
   if (card) { card.classList.add('playing'); lastLetterCard = card; }
-  const u = new SpeechSynthesisUtterance(ch);
-  u.lang = 'km'; u.rate = 0.75; u.pitch = 1;
-  u.onend = () => { if (card) card.classList.remove('playing'); };
-  window.speechSynthesis.speak(u);
+  speakKh(ch, () => { if (card) card.classList.remove('playing'); });
 }
 
 // ══════════════════════════════════════════════════════
@@ -956,7 +983,7 @@ function speakIdx(i, cb) {
 }
 
 function speakKhmer(i) {
-  const t=xlats[i]; if(t&&t!=='...') speak(t,'km');
+  const t=xlats[i]; if(t&&t!=='...') speakKh(t);
 }
 
 function speak(text, lang, cb) {
