@@ -9,6 +9,7 @@
 <title>SiMplyKhmenglish — Learn Together</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
 <style>
 :root {
   --orange: #F97316;
@@ -719,11 +720,19 @@ function showCats() {
   window.speechSynthesis.cancel();
 }
 
-// ── KHMER TTS via Google (Web Speech API has no Khmer voice on most devices) ──
+// ── KHMER TTS — uses ResponsiveVoice (Google TTS backend, works everywhere) ──
 function speakKh(text, onEnd) {
-  // Try native Khmer voice first
+  // 1) ResponsiveVoice: has a real Khmer Female voice, works on all browsers
+  if (window.responsiveVoice && responsiveVoice.voiceSupport()) {
+    responsiveVoice.speak(text, 'Khmer Female', {
+      rate: 0.9,
+      onend: onEnd || function() {}
+    });
+    return;
+  }
+  // 2) Native Khmer voice (Android Chrome usually has this)
   const voices = window.speechSynthesis.getVoices();
-  const khVoice = voices.find(v => v.lang.startsWith('km'));
+  const khVoice = voices.find(v => v.lang && v.lang.startsWith('km'));
   if (khVoice) {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
@@ -732,22 +741,22 @@ function speakKh(text, onEnd) {
     window.speechSynthesis.speak(u);
     return;
   }
-  // Fallback: Google TTS audio (works without API key)
-  const url = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=km&client=tw-ob`;
-  const audio = new Audio(url);
-  if (onEnd) audio.onended = onEnd;
-  audio.onerror = () => {
-    // Last resort: try Web Speech anyway
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'km'; u.rate = 0.8;
-    if (onEnd) u.onend = onEnd;
-    window.speechSynthesis.speak(u);
-  };
-  audio.play().catch(() => audio.onerror());
+  // 3) Wait a moment for ResponsiveVoice to load, then retry
+  if (!window._rvRetried) {
+    window._rvRetried = true;
+    setTimeout(() => { window._rvRetried = false; speakKh(text, onEnd); }, 1500);
+    return;
+  }
+  // 4) Last resort: Web Speech with km lang (may be silent but won't error)
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'km'; u.rate = 0.8;
+  if (onEnd) u.onend = onEnd;
+  window.speechSynthesis.speak(u);
 }
 
 let lastWordCard = null;
 function speakWord(text, lang, cardId) {
+  if (window.responsiveVoice) responsiveVoice.cancel();
   window.speechSynthesis.cancel();
   if (lastWordCard) lastWordCard.classList.remove('playing');
   const card = document.getElementById(cardId);
@@ -786,6 +795,7 @@ function fillAlpha(id, data, cls) {
 }
 
 function speakLetter(ch, cardId) {
+  if (window.responsiveVoice) responsiveVoice.cancel();
   window.speechSynthesis.cancel();
   if (lastLetterCard) lastLetterCard.classList.remove('playing');
   const card = document.getElementById(cardId);
