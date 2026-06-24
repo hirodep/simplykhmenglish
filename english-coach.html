@@ -720,40 +720,18 @@ function showCats() {
 }
 
 // ── KHMER TTS ──
-// Strategy: native km voice → Google APIs audio → romanization spoken in English
+// Uses native Khmer voice if available (Android Chrome), otherwise
+// speaks the romanization in English — always works, no server needed.
 function speakKh(text, onEnd, romanization) {
-  // 1) Native Khmer voice — works on Android Chrome & Windows with Khmer language pack
   const voices = window.speechSynthesis.getVoices();
   const khVoice = voices.find(v => v.lang && v.lang.startsWith('km'));
-  if (khVoice) {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.voice = khVoice; u.lang = 'km'; u.rate = 0.8;
-    if (onEnd) u.onend = onEnd;
-    window.speechSynthesis.speak(u);
-    return;
-  }
-
-  // 2) Google TTS via googleapis.com (used internally by Google Translate web)
-  const url = `https://translate.googleapis.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=km&client=gtx`;
-  const audio = new Audio(url);
-  let fired = false;
-  const done = () => { if (!fired) { fired = true; if (onEnd) onEnd(); } };
-
-  audio.onended = done;
-  audio.onerror = () => {
-    // 3) Fallback: speak the romanization in English if available
-    if (romanization) {
-      const u = new SpeechSynthesisUtterance(romanization);
-      u.lang = 'en-US'; u.rate = 0.75;
-      u.onend = done;
-      window.speechSynthesis.speak(u);
-    } else {
-      done();
-    }
-  };
-
-  audio.play().catch(() => audio.onerror());
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(khVoice ? text : (romanization || text));
+  if (khVoice) u.voice = khVoice;
+  u.lang = khVoice ? 'km' : 'en-US';
+  u.rate = 0.8;
+  if (onEnd) u.onend = onEnd;
+  window.speechSynthesis.speak(u);
 }
 
 let lastWordCard = null;
