@@ -9,7 +9,6 @@
 <title>SiMplyKhmenglish — Learn Together</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-<script src="https://code.responsivevoice.org/responsivevoice.js?key=FREE"></script>
 <style>
 :root {
   --orange: #F97316;
@@ -720,17 +719,10 @@ function showCats() {
   window.speechSynthesis.cancel();
 }
 
-// ── KHMER TTS — uses ResponsiveVoice (Google TTS backend, works everywhere) ──
-function speakKh(text, onEnd) {
-  // 1) ResponsiveVoice: has a real Khmer Female voice, works on all browsers
-  if (window.responsiveVoice && responsiveVoice.voiceSupport()) {
-    responsiveVoice.speak(text, 'Khmer Female', {
-      rate: 0.9,
-      onend: onEnd || function() {}
-    });
-    return;
-  }
-  // 2) Native Khmer voice (Android Chrome usually has this)
+// ── KHMER TTS ──
+// Strategy: native km voice → Google APIs audio → romanization spoken in English
+function speakKh(text, onEnd, romanization) {
+  // 1) Native Khmer voice — works on Android Chrome & Windows with Khmer language pack
   const voices = window.speechSynthesis.getVoices();
   const khVoice = voices.find(v => v.lang && v.lang.startsWith('km'));
   if (khVoice) {
@@ -741,22 +733,31 @@ function speakKh(text, onEnd) {
     window.speechSynthesis.speak(u);
     return;
   }
-  // 3) Wait a moment for ResponsiveVoice to load, then retry
-  if (!window._rvRetried) {
-    window._rvRetried = true;
-    setTimeout(() => { window._rvRetried = false; speakKh(text, onEnd); }, 1500);
-    return;
-  }
-  // 4) Last resort: Web Speech with km lang (may be silent but won't error)
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'km'; u.rate = 0.8;
-  if (onEnd) u.onend = onEnd;
-  window.speechSynthesis.speak(u);
+
+  // 2) Google TTS via googleapis.com (used internally by Google Translate web)
+  const url = `https://translate.googleapis.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(text)}&tl=km&client=gtx`;
+  const audio = new Audio(url);
+  let fired = false;
+  const done = () => { if (!fired) { fired = true; if (onEnd) onEnd(); } };
+
+  audio.onended = done;
+  audio.onerror = () => {
+    // 3) Fallback: speak the romanization in English if available
+    if (romanization) {
+      const u = new SpeechSynthesisUtterance(romanization);
+      u.lang = 'en-US'; u.rate = 0.75;
+      u.onend = done;
+      window.speechSynthesis.speak(u);
+    } else {
+      done();
+    }
+  };
+
+  audio.play().catch(() => audio.onerror());
 }
 
 let lastWordCard = null;
 function speakWord(text, lang, cardId) {
-  if (window.responsiveVoice) responsiveVoice.cancel();
   window.speechSynthesis.cancel();
   if (lastWordCard) lastWordCard.classList.remove('playing');
   const card = document.getElementById(cardId);
@@ -786,7 +787,7 @@ function fillAlpha(id, data, cls) {
   if (!el) return;
   el.className = cls;
   el.innerHTML = data.map((item, i) => `
-    <div class="letter-card" id="lc-${id}-${i}" onclick="speakLetter('${item.ch}','lc-${id}-${i}')">
+    <div class="letter-card" id="lc-${id}-${i}" onclick="speakLetter('${item.ch}','lc-${id}-${i}','${item.r}')">
       <span class="l-char">${item.ch}</span>
       <div class="l-rom">${item.r}</div>
       <div class="l-dot">🔊</div>
@@ -794,13 +795,12 @@ function fillAlpha(id, data, cls) {
   `).join('');
 }
 
-function speakLetter(ch, cardId) {
-  if (window.responsiveVoice) responsiveVoice.cancel();
+function speakLetter(ch, cardId, romanization) {
   window.speechSynthesis.cancel();
   if (lastLetterCard) lastLetterCard.classList.remove('playing');
   const card = document.getElementById(cardId);
   if (card) { card.classList.add('playing'); lastLetterCard = card; }
-  speakKh(ch, () => { if (card) card.classList.remove('playing'); });
+  speakKh(ch, () => { if (card) card.classList.remove('playing'); }, romanization);
 }
 
 // ══════════════════════════════════════════════════════
