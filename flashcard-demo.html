@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Khmer Flashcard Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@400;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #FFF7ED;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+h2 {
+  font-size: 18px;
+  color: #92400E;
+  margin-bottom: 28px;
+  letter-spacing: 0.5px;
+}
+
+/* ── CARD ── */
+.card {
+  background: white;
+  border-radius: 28px;
+  box-shadow: 0 8px 40px rgba(249,115,22,0.15);
+  width: 100%;
+  max-width: 360px;
+  padding: 48px 32px 36px;
+  text-align: center;
+  position: relative;
+}
+
+.card-number {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #D97706;
+  background: #FEF3C7;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.kh-char {
+  font-family: 'Noto Sans Khmer', sans-serif;
+  font-size: 120px;
+  line-height: 1.1;
+  color: #1C1917;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.kh-rom {
+  font-size: 22px;
+  font-weight: 600;
+  color: #78716C;
+  margin-bottom: 36px;
+  letter-spacing: 1px;
+}
+
+/* ── BUTTONS ── */
+.btn-row {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.btn-play {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: #F97316;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: transform 0.1s, opacity 0.15s;
+  box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+}
+.btn-play:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-play:active { transform: scale(0.97); }
+.btn-play:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+.btn-rec {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: white;
+  color: #DC2626;
+  border: 2px solid #DC2626;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s;
+}
+.btn-rec:hover { background: #FEF2F2; }
+.btn-rec.recording {
+  background: #DC2626;
+  color: white;
+  animation: pulse 1s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); }
+  50%       { box-shadow: 0 0 0 10px rgba(220,38,38,0); }
+}
+
+/* ── STATUS ── */
+.status {
+  font-size: 13px;
+  color: #6B7280;
+  min-height: 22px;
+  transition: color 0.2s;
+}
+.status.has-rec  { color: #16A34A; font-weight: 600; }
+.status.is-rec   { color: #DC2626; font-weight: 600; }
+
+/* ── TIMER ── */
+.timer-bar {
+  width: 100%;
+  height: 4px;
+  background: #F3F4F6;
+  border-radius: 4px;
+  margin: 12px 0 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.timer-bar.visible { opacity: 1; }
+.timer-fill {
+  height: 100%;
+  width: 0%;
+  background: #DC2626;
+  border-radius: 4px;
+  transition: width 0.1s linear;
+}
+
+/* ── NAV ── */
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  width: 100%;
+  max-width: 360px;
+}
+.btn-nav {
+  background: none;
+  border: 2px solid #E5E7EB;
+  border-radius: 50px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s;
+}
+.btn-nav:hover { border-color: #F97316; color: #F97316; }
+
+.dot-row {
+  display: flex;
+  gap: 6px;
+}
+.dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #E5E7EB;
+}
+.dot.active { background: #F97316; }
+.dot.done   { background: #16A34A; }
+</style>
+</head>
+<body>
+
+<h2>🇰🇭 Khmer Alphabet — Record a Voice</h2>
+
+<!-- FLASHCARD -->
+<div class="card" id="card">
+  <div class="card-number">1 / 33</div>
+  <span class="kh-char">ក</span>
+  <div class="kh-rom">ka</div>
+
+  <div class="btn-row">
+    <button class="btn-play" id="btnPlay" onclick="playAudio()" disabled>
+      🔊 Play
+    </button>
+    <button class="btn-rec" id="btnRec" onclick="toggleRecord()">
+      🎤 Record
+    </button>
+  </div>
+
+  <div class="status" id="status">No recording yet — press 🎤 to record</div>
+  <div class="timer-bar" id="timerBar">
+    <div class="timer-fill" id="timerFill"></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav-row">
+  <button class="btn-nav">← Prev</button>
+  <div class="dot-row">
+    <div class="dot active" id="dot-0"></div>
+    <div class="dot" id="dot-1"></div>
+    <div class="dot" id="dot-2"></div>
+  </div>
+  <button class="btn-nav">Next →</button>
+</div>
+
+<script>
+// ── IndexedDB ──
+let db;
+const DB_NAME = 'KhmerRecordings', STORE = 'audio';
+
+function openDB() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open(DB_NAME, 1);
+    r.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+    r.onsuccess = e => { db = e.target.result; res(db); };
+    r.onerror = rej;
+  });
+}
+function saveBlob(key, blob) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).put(blob, key);
+    tx.oncomplete = res; tx.onerror = rej;
+  });
+}
+function loadBlob(key) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(STORE, 'readonly');
+    const r = tx.objectStore(STORE).get(key);
+    r.onsuccess = e => res(e.target.result);
+    r.onerror = rej;
+  });
+}
+
+// ── State ──
+const LETTER_KEY = 'cons-0'; // ក
+let currentBlob = null;
+let mediaRecorder = null;
+let chunks = [];
+let timerInterval = null;
+
+// ── Init ──
+openDB().then(async () => {
+  const blob = await loadBlob(LETTER_KEY);
+  if (blob) setRecorded(blob);
+});
+
+// ── Play ──
+function playAudio() {
+  if (!currentBlob) return;
+  const url = URL.createObjectURL(currentBlob);
+  const audio = new Audio(url);
+  audio.onended = () => URL.revokeObjectURL(url);
+  audio.play();
+
+  // Flash the card orange briefly
+  const card = document.getElementById('card');
+  card.style.boxShadow = '0 8px 40px rgba(249,115,22,0.5)';
+  setTimeout(() => card.style.boxShadow = '', 600);
+}
+
+// ── Record ──
+async function toggleRecord() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    chunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+
+    mediaRecorder.ondataavailable = e => chunks.push(e.data);
+    mediaRecorder.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      clearInterval(timerInterval);
+      const blob = new Blob(chunks, { type: 'audio/webm' });
+      await saveBlob(LETTER_KEY, blob);
+      setRecorded(blob);
+    };
+
+    mediaRecorder.start();
+    setRecording(true);
+
+    // Auto-stop at 3 seconds
+    let elapsed = 0;
+    timerInterval = setInterval(() => {
+      elapsed += 100;
+      document.getElementById('timerFill').style.width = (elapsed / 3000 * 100) + '%';
+      if (elapsed >= 3000 && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+      }
+    }, 100);
+
+  } catch(e) {
+    document.getElementById('status').textContent = '⚠️ Microphone access denied';
+  }
+}
+
+// ── UI States ──
+function setRecording(on) {
+  const btn = document.getElementById('btnRec');
+  const status = document.getElementById('status');
+  const bar = document.getElementById('timerBar');
+  const fill = document.getElementById('timerFill');
+
+  if (on) {
+    btn.textContent = '⏹ Stop';
+    btn.classList.add('recording');
+    status.textContent = '🔴 Recording... (3 sec max)';
+    status.className = 'status is-rec';
+    bar.classList.add('visible');
+    fill.style.width = '0%';
+  } else {
+    btn.textContent = '🎤 Record';
+    btn.classList.remove('recording');
+    bar.classList.remove('visible');
+  }
+}
+
+function setRecorded(blob) {
+  currentBlob = blob;
+  setRecording(false);
+  document.getElementById('btnPlay').disabled = false;
+  document.getElementById('btnRec').textContent = '🔄 Re-record';
+  const status = document.getElementById('status');
+  status.textContent = '✅ Recording saved — press Play to hear it';
+  status.className = 'status has-rec';
+  document.getElementById('dot-0').classList.add('done');
+}
+</script>
+</body>
+</html>
