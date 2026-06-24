@@ -720,16 +720,15 @@ function showCats() {
 }
 
 // ── KHMER TTS ──
-// Uses native Khmer voice if available (Android Chrome), otherwise
-// speaks the romanization in English — always works, no server needed.
+// Uses native Khmer voice (Android Chrome / Windows Khmer language pack).
+// On devices without a Khmer voice, the button does nothing.
 function speakKh(text, onEnd, romanization) {
   const voices = window.speechSynthesis.getVoices();
   const khVoice = voices.find(v => v.lang && v.lang.startsWith('km'));
+  if (!khVoice) { if (onEnd) onEnd(); return; }
   window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(khVoice ? text : (romanization || text));
-  if (khVoice) u.voice = khVoice;
-  u.lang = khVoice ? 'km' : 'en-US';
-  u.rate = 0.8;
+  const u = new SpeechSynthesisUtterance(text);
+  u.voice = khVoice; u.lang = 'km'; u.rate = 0.8;
   if (onEnd) u.onend = onEnd;
   window.speechSynthesis.speak(u);
 }
